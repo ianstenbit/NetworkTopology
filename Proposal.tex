@@ -1,0 +1,120 @@
+\documentclass{sigcomm-alternate}
+\usepackage[utf8]{inputenc}
+
+\title{Minimizing Wireless Traffic Interference Using Dynamically Reconfigured Hierarchical Network Topology}
+\author{Erik Gabrielsen, Ian Johnson, Danh Nguyen, Gavin Pham, Alex Saladna, Travis Siems\\ \{egabrielsen, ianj, danhn, gpham, asaladna, tsiems\}@smu.edu}
+\date{January 2016}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{The Problem}
+%The ability to connect to the Internet without wires has given people a convenient, easy, and preferred way of communicating with others. The use of mobile phones and personal computers, all being connected to a wireless network has grown exponentially in the past 10 years. With the rise in popularity of mobile devices connecting wirelessly, the amount of network interference that each of these devices have with one another has also increased. Because devices, or nodes, communicate wirelessly, each node transmits a radio signal that is sent out to an Access Point (AP) rather than through a physical wire. Therefore, each node signal will experience the effects of interference, as other nodes are transmitting their signal at the same time to the same AP. As network traffic increases, these interferences cause connection lag and cause the experience to become less then optimal. The source of this problem is due to the type of Network Topology that the network chooses. Our goal is to find an optimal spanning tree that will minimize the maximum interference in a network given a total number of nodes, n, and a radius v, the distance from the center of the node to the closest neighbor. 
+Wireless networks rely on electromagnetic signals to share information among clients; this electromagnetic radiation can cause interference when multiple hosts attempt to send signals through the same airspace at the same time. In user-rich, high-bandwidth LANs, message collisions and electromagnetic interference can significantly impede network efficiency.
+
+802.11 networks typically function by allowing network users to connect to one of many Access Points (AP) spatially distributed across the network. In order for each user on the network to connect to any AP, it must be close enough to that AP so that any signal it broadcasts arrives at the AP with enough strength to be interpreted by the AP. Generally, every individual host sends a signal directly to the AP. While this allows each host to easily connect to the AP, it also introduces considerable electromagnetic noise to other hosts on the network which, generally, are not interested in any host-AP communications but their own. As user count increases, electromagnetic noise density follows. Hosts which are physically distant from their assigned AP often cause substantial noise due to the strength of the signal they must broadcast to communicate with the AP. In LANs with numerous users distributed over a large geographic area, this can become a crippling inhibitor of wireless communication.
+
+
+% Problems with Network Interference and various topologies. \ Find a spanning tree that minimizes the maximum interference.
+
+% Third Person Passive Voice
+%Clear statement of the research problem.
+%Clear statement of your research methodology
+%A statement of previous work related to the problem
+%A statement of your research plan and schedule.
+%A list of resources needed to accomplish your work, with special emphasis on important pieces you don’t yet have access to.
+%Any other questions or clarifications you need from us.
+
+
+\section{Methodology}
+In order to ameliorate the burden of network interference, a network topology will be designed which dynamically assigns hosts on the network to act as sub-APs which route traffic from nearby hosts to the root AP to prevent each host from individually broadcasting a signal to the root AP. The sub-AP will organize a geographically localized sub network which will collectively route network traffic through the sub-AP. The system will be designed and implemented in a virtualized physical space with a virtual network.
+
+An efficient implementation of a dynamically organized hierarchical LAN network topology will require a number of functionalities on part of the AP, as well as each individual host on the network. An AP must be able to efficiently select sub-APs based on the proximity and network activity of a potential sub-AP, as well as the traffic density of the area around the potential sub-AP. In order for the system to function properly for a dynamic network (one which is perpetually gaining and losing nodes), an AP must be able to effectively assign a sub-AP to new hosts connecting to the network based on a new host's proximity to existing network nodes. Ideally, an AP will also be able to replace an existing sub-AP based on the performance of that sub-AP and its spatially proximate nodes, or when the sub-AP leaves the network. When a sub-AP leaves the network, it must also be able to communicate to each of its children nodes which node will become the new sub-AP. Each individual node on the network will need to be aware of spatially proximate hosts, and must also be aware of its localized sub-AP such that it can route communications through the correct host. Finally, should any sub-AP aggregate numerous children, it may be relevant to allow that sub-AP to recursively assign its own sub-APs to create a tiered hierarchy of APs and sub-APs on the network.
+
+%Each sub-AP can recursively assign its own sub-APs to further minimize network interference. Whenever a new individual host accesses the network, it will contact the root AP which will instruct it which sub-AP to route traffic through \textbf{\textit{there must be a better way to do this. Maybe send queries to nearby nodes to ask which sub-AP to use? That would help reduce interference}}. When any sub-AP leaves the network, a client of the departing sub-AP (chosen by optimizing bandwith, latency, and total uptime) will be assigned to become the new sub-AP and its siblings will become its children. If at any point a host on the network fails to connect to the AP via its local sub-AP, it will work its way up the AP tree attempting to re-establish contact with the root AP. Each AP is responsible for allocating sub-APs. A virtualized network sandbox will be built and used to model the topology and the topology will be tested with varying algorithms (e.g. maximum number of child nodes allowed per sub-AP, sub-AP assignment protocol, and geographic clustering strategy) and in varying circumstances (e.g. variable building configurations and network traffic patterns).
+
+
+
+\section{Previous Work}
+
+% A description of the paper about topology controls in wireless sensor networks
+
+A lot of work has gone into designing a network topology for a Wireless Sensor Network, and the properties and problems of many proposed topologies. There is no fixed infrastructure in such networks; devices are mobile and routes can break \cite{tcpp}. Interference is a source of power consumption. Pedro Wightman and Miguel Labrador define main ways to reduce network topology: changing the transmission range, creating a hierarchy, and a hybrid of both. We will develop a hybrid method for topology control.
+
+%For all of these, make sure that the descriptions explain how the research pertains to our topic.
+
+%A description of the paper about the weight-label method -- I maybe able to write about it as a way we can apply to our problem but it's CPM, so about project networks.
+%\cite{weightLabelMethod} 
+
+%A description of the Ph.D thesis about optimal routing for ad-hoc networks. Idris Skloul Ibrahim 
+
+Other research has been conducted to address the mobility of nodes in wireless networks and other constraints (e.g. "bandwidth, radio propagation, energy supply, etc") \cite{phdthesis1}. Idress Skloul Ibrahim  worked on a "Optimum Route Algorithm" to find the shortest route based on hops between the source and destination, by creating tables to keep track of different routes and states for each node in the network. When a new node enters a network, it will determine and store optimal as well as sub-optimal paths to the one-or-two-hops neighbors. While we plan on implementing a different way to determine routes, the constraints of nodes detailed are still relevant in our project.
+
+%A description of the paper on dynamic MAN topologies 
+
+Research into the field of dynamic network topology has been performed by Hwee Xian Tan and Winston Seah \cite{dynamictopology}. Their findings showed that a higher number of nodes can mean more connectivity between nodes in a network, but that can also mean more collision and interference. The transmission range of nodes are reduced to the minimum required to maintain connectivity with neighboring nodes that are part of the active route. This reduces interference with neighboring pairs, and reducing transmission range pertains heavily to our research.
+
+% A description of the paper about 802.11 AP selection hmm are we doing AP selection? Don't think this relevant unless we look at multiple APs. I'll cite this as something we can use for that
+
+Most works listed so far deal with nodes in a network. Vasudevan et al. considered the problem of wireless clients determining which APs to connect to. They account for the load at each AP as well as the current way in which these connections are formed: wireless devices connect to the strongest signal strength from the APs in its neighborhood. However, their experiments are conducted in a noise-free environment \cite{apselection}. 
+
+% A description of the research paper on dynamic wireless topologies DMAC
+
+One important thing to consider when designing dynamic wireless topologies is the power of the signals sent out by sub-AP's to a main AP. Because we are sending the data of all nodes in a section through one sub-AP node the power will be greater, causing greater interference. One possible solution was laid out by Stefano Basagni, Alessio Carosi, and Chiara Petrioli, by using "an energy-conserving sleep mode" \cite{DMAC}.  This methodology could greatly decrease the interference if implemented in the proper way and will be considered in our research. 
+
+
+
+\section{Plan and Schedule}
+%We plan to have the initial draft completed before March 1st. This is to assure that we have plenty of time to fix any potential issues that may arise. From this point, we plan to have the final draft done by April 1st. The final project is due April 7th, but we plan to use the extra days to test our system.  Finally, the semester report will be complete by May 1st and turned in the following day.
+
+%Look into protocols needed to route through other computers to the router. Determine how to choose which hosts to be sub-APs. (max heap) Figure out gaining access and determining which sub-AP a new user would connect to. Consider security issues.
+
+
+The design and implementation of a hierarchical interference - minimizing network topology has been split up into 5 sprints, each of which is assigned a delivery date. 
+
+\begin{enumerate}
+    
+    \item The first milestone in a hierarchical network topology is implementing a system in which the root AP can select ideal sub-APs based on basic information about each host on the network, such as a latency, average network activity, and total uninterrupted time spent on network. 
+    
+    \textit{Delivery Date: 2/11/2016}
+
+    \item Once a root AP can efficiently assign sub-APs based on a static network, it must be able to assign new hosts on a network to a sub-AP based on the new node's proximity to existing sub-APs and the current traffic density of the nearby sub-APs. 
+    
+    \textit{Delivery Date: 2/18/2016}
+
+    \item Once the hierarchical network topology has been established, it should be able to reorganize itself to minimize interference when new nodes are introduced into the network. 
+    
+    \textit{Delivery Date: 2/25/2016}
+
+    \item Once the hierarchical network can dynamically adapt to incoming nodes, it must be able to elect a new sub-AP should an existing sub-AP leave the network, and it must inform the sub-APs children of which host has become the new sub-AP.
+    
+    \textit{Delivery Date: 3/3/2016}
+
+    \item Should the hierarchical network function for a two-tiered system, the system should be recursively expanded to allow sub-APs to assign their own sub-APs to generate a multi-tier AP hierarchy.
+    
+    \textit{Delivery Date: 3/18/2016}
+\end{enumerate}
+
+Should each of the sprints be delivered on schedule, remaining research time will be spent optimizing existing infrastructure and testing it in a virtualized network environment.
+
+
+\section{Resources Needed}
+The proposed network topology will be designed and implemented in a strictly virtualized environment, such that the required resources are limited to access to computers. All work will be done on researchers' private computers and the SMU Lyle General Use servers. Therefore, no external resources will be required to complete the research.
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+
+
+%For previous work:
+%https://www.usenix.org/legacy/event/imc05/tech/full_papers/vasudevan/vasudevan.pdf
+%http://www.macs.hw.ac.uk/~isi3/Phd_Proposal_files/Phd_draftproposal%5b3%5d.pdf
+%http://www.ajol.info/index.php/orion/article/download/34270/6279
+%http://www.icmu.org/icmu2005/Papers/117039-1-050226201619.pdf
+
+\end{document}
