@@ -7,9 +7,34 @@ num_hosts = 50
 
 #Build a default host at position x, y. Modify this function to add more params to the host structure
 def buildDefaultHostAtXY(x, y, s):
-    return {'x': x, 'y': y, 'signal': s, 'showInterference': False}
+    return {'x': x, 'y': y, 'bandwidth': s, 'signalDistance': 0, 'showInterference': False}
 
+            
+def distanceBetweenHosts(h1, h2):
+    return sqrt((h1['x'] - h2['x'])**2 + (h1['y'] - h2['y'])**2)    
 
+def printInterferenceStats():
+    totalInterference = 0
+    for host in hosts:
+        x = host['x']
+        y = host['y']
+        
+        for compare in hosts:
+            if(distanceBetweenHosts(host, compare) < host['signalDistance']):
+                totalInterference = totalInterference + 1
+        
+    print "Average number of interfering nodes per node: "
+    print (totalInterference + 0.0) / len(hosts)
+    print "Number of nodes:"
+    print len(hosts)
+    print "Number of interferences:"
+    print totalInterference
+                           
+def refreshHostSignalDistances():
+    for host in hosts:
+        host['signalDistance'] = sqrt((host['x'] - SCREEN_WIDTH/2)**2 + (host['y'] - SCREEN_HEIGHT/2)**2)
+    
+    
 #Randomly generate some hosts for the network
 def randomlyGenerateHosts(num):
     hosts = []
@@ -27,13 +52,6 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
             hosts.append(buildDefaultHostAtXY(x + random(spread) - spread/2, y + random(spread) - spread/2, random(50)))
     
     return hosts
-        
-
-#hosts = randomlyGenerateHosts(num_hosts)
-hosts = randomlyGenerateHostsInGroups(10,10,50)
-#The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
-
-AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
    
 #Processing setup -- use this only for setting up processing stuff, not other python stuff   
 def setup():
@@ -52,13 +70,13 @@ def draw():
         fill(0)
         x = host['x']
         y = host['y']
-        signal = host['signal']
+        bandwidth = host['bandwidth']
         ellipse(x, y, 10,10)
         line(x, y, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
         if(host['showInterference'] or AP['showInterference']):
             noStroke()
-            fill(0, signal)
-            distToAP = sqrt((x-SCREEN_WIDTH/2)**2 + (y-SCREEN_HEIGHT/2)**2)
+            fill(0, bandwidth)
+            distToAP = host['signalDistance']
             ellipse(x, y, 2*distToAP, 2*distToAP)
         
     noStroke() 
@@ -88,3 +106,14 @@ def mousePressed():
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - SCREEN_WIDTH/2) <= 50 and abs(mouseY- SCREEN_HEIGHT/2) <= 50):
         AP['showInterference'] = not AP['showInterference']
+        
+        
+        
+#hosts = randomlyGenerateHosts(num_hosts)
+hosts = randomlyGenerateHostsInGroups(10,10,50)
+refreshHostSignalDistances()
+#The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
+
+AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
+
+printInterferenceStats()
