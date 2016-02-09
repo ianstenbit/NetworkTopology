@@ -41,7 +41,8 @@ def refreshHostSignalDistances():
     
 
 def refreshTopology():
-    setHostAPsTravisAlgorithm()
+    #setHostAPsTravisAlgorithm()
+    setHostAPsIanAlgorithm(5)
     refreshHostSignalDistances()
     printInterferenceStats()
     
@@ -67,6 +68,37 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
 def setHostAPsNullAlgorithm():
     for host in hosts:
         host['myAP'] = AP 
+        
+def setHostAPsIanAlgorithm(numSubAPs):
+    
+    global hosts
+    
+    for host in hosts:
+        host['myAP'] = host
+    
+    for i in range(numSubAPs):
+        for host in hosts:
+            distanceSum = 0
+            host['distanceSum'] = 0
+            for compare in hosts:
+                if(compare['myAP'] == host):
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)
+                else:
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)*999999999
+            
+        
+        hosts = sorted(hosts, key=lambda k:  k['distanceSum'])
+        hosts[i]['myAP'] = AP
+        
+    for host in hosts[numSubAPs:]:
+        distances = []
+        for subAP in hosts[:numSubAPs]:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = hosts[distances.index(min(distances))]
+        
+    
+            
+        
         
 def setHostAPsTravisAlgorithm():
     subAPs = []
@@ -160,8 +192,8 @@ def mousePressed():
          
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
-#hosts = randomlyGenerateHosts(num_hosts)
-hosts = randomlyGenerateHostsInGroups(10,10,50)
+hosts = randomlyGenerateHosts(num_hosts)
+#hosts = randomlyGenerateHostsInGroups(10,10,50)
 
 refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
