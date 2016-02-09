@@ -1,3 +1,5 @@
+
+
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
@@ -7,11 +9,13 @@ num_hosts = 50
 
 #Build a default host at position x, y. Modify this function to add more params to the host structure
 def buildDefaultHostAtXY(x, y, s):
-    return {'x': x, 'y': y, 'bandwidth': s, 'signalDistance': 0, 'showInterference': False}
-
-            
+    return {'x': x, 'y': y, 'bandwidth': s, 'signalDistance': 0, 'myAP': None, 'showInterference': False}
+                    
 def distanceBetweenHosts(h1, h2):
     return sqrt((h1['x'] - h2['x'])**2 + (h1['y'] - h2['y'])**2)    
+
+def drawLineBetweenHosts(h1, h2):
+    line(h1['x'], h1['y'], h2['x'], h2['y'])
 
 def printInterferenceStats():
     totalInterference = 0
@@ -32,7 +36,14 @@ def printInterferenceStats():
                            
 def refreshHostSignalDistances():
     for host in hosts:
-        host['signalDistance'] = sqrt((host['x'] - SCREEN_WIDTH/2)**2 + (host['y'] - SCREEN_HEIGHT/2)**2)
+        myAP = host['myAP']
+        host['signalDistance'] = sqrt((host['x'] - myAP['x'])**2 + (host['y'] - myAP['y'])**2)
+    
+
+def refreshTopology():
+    setHostAPsNullAlgorithm()
+    refreshHostSignalDistances()
+    printInterferenceStats()
     
     
 #Randomly generate some hosts for the network
@@ -53,6 +64,10 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
     
     return hosts
    
+def setHostAPsNullAlgorithm():
+    for host in hosts:
+        host['myAP'] = AP 
+   
 #Processing setup -- use this only for setting up processing stuff, not other python stuff   
 def setup():
     print "Setup" 
@@ -72,7 +87,7 @@ def draw():
         y = host['y']
         bandwidth = host['bandwidth']
         ellipse(x, y, 10,10)
-        line(x, y, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        drawLineBetweenHosts(host, host['myAP'])
         if(host['showInterference'] or AP['showInterference']):
             noStroke()
             fill(0, bandwidth)
@@ -102,18 +117,19 @@ def mousePressed():
         
     if(not clickedOnHost):
         hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
+        setHostAPsNullAlgorithm()
+        refreshHostSignalDistances()
+        printInterferenceStats()
         
     #If we clicked the AP, flip its showInterference attribute
-    if(abs(mouseX - SCREEN_WIDTH/2) <= 50 and abs(mouseY- SCREEN_HEIGHT/2) <= 50):
+    if(abs(mouseX - AP['x']) <= 25 and abs(mouseY- AP['y']) <= 25):
         AP['showInterference'] = not AP['showInterference']
-        
-        
+       
+         
+AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
 #hosts = randomlyGenerateHosts(num_hosts)
 hosts = randomlyGenerateHostsInGroups(10,10,50)
-refreshHostSignalDistances()
+
+refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
-
-AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
-
-printInterferenceStats()
