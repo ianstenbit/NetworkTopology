@@ -41,7 +41,7 @@ def refreshHostSignalDistances():
     
 
 def refreshTopology():
-    setHostAPsNullAlgorithm()
+    setHostAPsTravisAlgorithm()
     refreshHostSignalDistances()
     printInterferenceStats()
     
@@ -67,7 +67,41 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
 def setHostAPsNullAlgorithm():
     for host in hosts:
         host['myAP'] = AP 
+        
+def setHostAPsTravisAlgorithm():
+    subAPs = []
+    global hosts
+    
+    for host in hosts:
+        if host.has_key('myAP'):
+            del host['myAP']
+    
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k) - AP['signalDistance'])
+    
+    for host in hosts:
+        if 'myAP' not in host:
+            host['myAP'] = AP
+            host['signalDistance'] = sqrt((host['x'] - AP['x'])**2 + (host['y'] - AP['y'])**2)
+            setSurroundingHostsAP(host)
    
+     
+def setSurroundingHostsAP(subAP):
+    tempHosts = sorted(hosts, key=lambda k: distanceBetweenHosts(subAP, k) - subAP['signalDistance']) 
+    
+    print "subAP signalDistance: " + str(subAP['signalDistance'])
+    
+    numberOfHosts = 0
+    for host in tempHosts:
+        if 'myAP' not in host and distanceBetweenHosts(subAP, host) < subAP['signalDistance']:
+            host['myAP'] = subAP
+            
+            numberOfHosts += 1
+            
+            # arbitrary number (should make this max number of hosts meaningful)
+            if numberOfHosts > 5:
+                return
+
+
 #Processing setup -- use this only for setting up processing stuff, not other python stuff   
 def setup():
     print "Setup" 
@@ -117,7 +151,7 @@ def mousePressed():
         
     if(not clickedOnHost):
         hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
-        setHostAPsNullAlgorithm()
+        setHostAPsTravisAlgorithm()
         refreshHostSignalDistances()
         printInterferenceStats()
         
