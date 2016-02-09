@@ -1,22 +1,25 @@
+# Global Variables
+num_hosts = 50
+
 #A host is created using a dictionary, so we can add/remove attributes as we please
 
 #Build a default host at position x, y. Modify this function to add more params to the host structure
-def buildDefaultHostAtXY(x, y):
-    return {'x': x, 'y': y, 'showInterference': False}
+def buildDefaultHostAtXY(x, y, s):
+    return {'x': x, 'y': y, 'signal': s, 'showInterference': False}
 
 
 #Randomly generate some hosts for the network
 def randomlyGenerateHosts(num):
     hosts = []
     for i in range(num):
-        hosts.append(buildDefaultHostAtXY(random(1600), random(800)))
+        hosts.append(buildDefaultHostAtXY(random(1600), random(800), random(50)))
     return hosts
 
-hosts = randomlyGenerateHosts(50)
+hosts = randomlyGenerateHosts(num_hosts)
 
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
-AP = buildDefaultHostAtXY(800, 450)
+AP = buildDefaultHostAtXY(800, 450, 0)
    
 #Processing setup -- use this only for setting up processing stuff, not other python stuff   
 def setup():
@@ -35,11 +38,12 @@ def draw():
         fill(0)
         x = host['x']
         y = host['y']
+        signal = host['signal']
         ellipse(x, y, 10,10)
         line(x, y, 800, 450)
         if(host['showInterference'] or AP['showInterference']):
             noStroke()
-            fill(0, 20)
+            fill(0, signal)
             distToAP = sqrt((x-800)**2 + (y-450)**2)
             ellipse(x, y, 2*distToAP, 2*distToAP)
         
@@ -67,7 +71,7 @@ def mousePressed():
             break
         
     if(not clickedOnHost):
-        hosts.append(buildDefaultHostAtXY(mouseX, mouseY))
+        hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
         
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - 800) <= 50 and abs(mouseY- 450) <= 50):
