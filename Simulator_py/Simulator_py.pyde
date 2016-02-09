@@ -41,8 +41,8 @@ def refreshHostSignalDistances():
     
 
 def refreshTopology():
-    #setHostAPsTravisAlgorithm()
-    setHostAPsIanAlgorithm(5)
+    setHostAPsTravisAlgorithm()
+    #setHostAPsIanAlgorithm(5)
     refreshHostSignalDistances()
     printInterferenceStats()
     
@@ -68,7 +68,8 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
 def setHostAPsNullAlgorithm():
     for host in hosts:
         host['myAP'] = AP 
-        
+    
+##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
 def setHostAPsIanAlgorithm(numSubAPs):
     
     global hosts
