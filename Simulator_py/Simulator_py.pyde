@@ -1,4 +1,6 @@
 # Global Variables
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 800
 num_hosts = 50
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
@@ -12,20 +14,20 @@ def buildDefaultHostAtXY(x, y, s):
 def randomlyGenerateHosts(num):
     hosts = []
     for i in range(num):
-        hosts.append(buildDefaultHostAtXY(random(1600), random(800), random(50)))
+        hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(50)))
     return hosts
 
 hosts = randomlyGenerateHosts(num_hosts)
 
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
-AP = buildDefaultHostAtXY(800, 450, 0)
+AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
    
 #Processing setup -- use this only for setting up processing stuff, not other python stuff   
 def setup():
     print "Setup" 
     ellipseMode(CENTER)
-    size(1600,900)
+    size(SCREEN_WIDTH,SCREEN_HEIGHT)
     background(255)     
 
 #Draw loop - should ideally be used only for drawing stuff, not our algorithms
@@ -40,16 +42,16 @@ def draw():
         y = host['y']
         signal = host['signal']
         ellipse(x, y, 10,10)
-        line(x, y, 800, 450)
+        line(x, y, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
         if(host['showInterference'] or AP['showInterference']):
             noStroke()
             fill(0, signal)
-            distToAP = sqrt((x-800)**2 + (y-450)**2)
+            distToAP = sqrt((x-SCREEN_WIDTH/2)**2 + (y-SCREEN_HEIGHT/2)**2)
             ellipse(x, y, 2*distToAP, 2*distToAP)
         
     noStroke() 
     fill(0,0,255)
-    ellipse(800, 450, 50, 50)
+    ellipse(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 50, 50)
     
 #Called when the mouse is pressed -- I know, profound.
 def mousePressed():
@@ -74,5 +76,5 @@ def mousePressed():
         hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
         
     #If we clicked the AP, flip its showInterference attribute
-    if(abs(mouseX - 800) <= 50 and abs(mouseY- 450) <= 50):
+    if(abs(mouseX - SCREEN_WIDTH/2) <= 50 and abs(mouseY- SCREEN_HEIGHT/2) <= 50):
         AP['showInterference'] = not AP['showInterference']
