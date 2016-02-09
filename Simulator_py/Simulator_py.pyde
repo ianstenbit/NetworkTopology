@@ -17,8 +17,20 @@ def randomlyGenerateHosts(num):
         hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(50)))
     return hosts
 
-hosts = randomlyGenerateHosts(num_hosts)
+def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
+    hosts = []
+    
+    for i in range(numGroups):
+        x = random(SCREEN_WIDTH)
+        y = random(SCREEN_HEIGHT)
+        for j in range(int(random(maxHostsPerGroup-1) + 1)):
+            hosts.append(buildDefaultHostAtXY(x + random(spread) - spread/2, y + random(spread) - spread/2, random(50)))
+    
+    return hosts
+        
 
+#hosts = randomlyGenerateHosts(num_hosts)
+hosts = randomlyGenerateHostsInGroups(10,10,50)
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
@@ -66,8 +78,6 @@ def mousePressed():
         #If we clicked on this host
         if(abs(x - mouseX) < 10 and abs(y - mouseY) < 10):
             
-            #print it and flip its showInterference attribute
-            print host
             host['showInterference'] = not host['showInterference']
             clickedOnHost = True
             break
