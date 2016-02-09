@@ -151,9 +151,7 @@ def mousePressed():
         
     if(not clickedOnHost):
         hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
-        setHostAPsTravisAlgorithm()
-        refreshHostSignalDistances()
-        printInterferenceStats()
+        refreshTopology()
         
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - AP['x']) <= 25 and abs(mouseY- AP['y']) <= 25):
