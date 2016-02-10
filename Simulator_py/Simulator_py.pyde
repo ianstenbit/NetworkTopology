@@ -63,8 +63,10 @@ def refreshHostSignalDistances():
 
 def refreshTopology():
     global current_algorithm
+    global hosts
+    global AP
     if abs(current_algorithm % 3) == 1:
-        setHostAPsIanAlgorithm(5)
+        setHostAPsIanAlgorithm(5, hosts, AP)
     elif abs(current_algorithm % 3) == 2:
         setHostAPsTravisAlgorithm()
     else:
@@ -96,14 +98,14 @@ def setHostAPsNullAlgorithm():
         host['myAP'] = AP 
     
 ##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
-def setHostAPsIanAlgorithm(numSubAPs):
+def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
     
-    global hosts
+    global AP
     
     for host in hosts:
         host['myAP'] = host
     
-    for i in range(numSubAPs):
+    for i in range(min(numSubAPs, len(hosts))):
         for host in hosts:
             distanceSum = 0
             host['distanceSum'] = 0
@@ -116,7 +118,7 @@ def setHostAPsIanAlgorithm(numSubAPs):
             
         
         hosts = sorted(hosts, key=lambda k:  k['distanceSum'])
-        hosts[i]['myAP'] = AP
+        hosts[i]['myAP'] = baseAP
         
     for host in hosts[numSubAPs:]:
         distances = []
@@ -124,6 +126,16 @@ def setHostAPsIanAlgorithm(numSubAPs):
             distances.append(distanceBetweenHosts(host, subAP))
         host['myAP'] = hosts[distances.index(min(distances))]
         host['nodeColor'] = 0
+        
+    if AP == baseAP:
+        for host in hosts:
+            if host['myAP'] == AP:
+                subHosts = []
+                for compare in hosts:
+                    if compare['myAP'] == host:
+                        subHosts.append(compare)
+                if(len(subHosts) >= numSubAPs/2):
+                    setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
         
     
             
@@ -199,7 +211,7 @@ def draw():
         
     noStroke() 
     fill(0,0,255)
-    ellipse(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 50, 50)
+    ellipse(AP['x'], AP['y'], 50, 50)
     
 #Called when the mouse is pressed -- I know, profound.
 def mousePressed():
@@ -243,19 +255,19 @@ def keyPressed():
         show_stats = False
     elif key == ' ':
         show_stats = True
-    if keyCode == RIGHT:
+    elif keyCode == RIGHT:
         current_algorithm = current_algorithm + 1
         refreshTopology()
-    if keyCode == LEFT:
+    elif keyCode == LEFT:
         current_algorithm = current_algorithm - 1
         refreshTopology()
-    if keyCode == UP:
+    elif keyCode == UP:
         current_randomization_pattern = current_randomization_pattern + 1
-    if keyCode == DOWN:
+    elif keyCode == DOWN:
         current_randomization_pattern = current_randomization_pattern - 1
         
         
-         
+#The AP is going to be centered by default, but this should be changeable (not all networks have centered AP)         
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
 hosts = randomlyGenerateHosts(num_hosts)
