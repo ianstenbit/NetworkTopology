@@ -6,6 +6,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 50
 show_stats = False
 current_algorithm = 1
+current_randomization_pattern = 1
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
 
@@ -66,6 +67,8 @@ def refreshTopology():
         setHostAPsIanAlgorithm(5)
     elif abs(current_algorithm % 3) == 2:
         setHostAPsTravisAlgorithm()
+    else:
+        setHostAPsNullAlgorithm()
     refreshHostSignalDistances()
     printInterferenceStats()
     
@@ -228,9 +231,13 @@ def keyPressed():
     global hosts
     global show_stats
     global current_algorithm
+    global current_randomization_pattern
     # refreshes screen with new topology
     if key == 'r' or key == 'R': 
-        hosts = randomlyGenerateHosts(num_hosts)
+        if current_randomization_pattern %2 == 1:
+            hosts = randomlyGenerateHosts(num_hosts)
+        else:
+            hosts = randomlyGenerateHostsInGroups(10,10,50)
         refreshTopology() 
     if key == ' ' and show_stats:
         show_stats = False
@@ -242,13 +249,16 @@ def keyPressed():
     if keyCode == LEFT:
         current_algorithm = current_algorithm - 1
         refreshTopology()
+    if keyCode == UP:
+        current_randomization_pattern = current_randomization_pattern + 1
+    if keyCode == DOWN:
+        current_randomization_pattern = current_randomization_pattern - 1
         
         
          
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
 hosts = randomlyGenerateHosts(num_hosts)
-#hosts = randomlyGenerateHostsInGroups(10,10,50)
 
 refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
