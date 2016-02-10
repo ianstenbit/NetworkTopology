@@ -65,14 +65,20 @@ def refreshTopology():
     global current_algorithm
     global hosts
     global AP
-    if abs(current_algorithm % 3) == 1:
-        setHostAPsIanAlgorithm(5, hosts, AP)
-    elif abs(current_algorithm % 3) == 2:
-        setHostAPsTravisAlgorithm()
-    else:
+    if abs(current_algorithm % 4) == 1:
         setHostAPsNullAlgorithm()
+        print("Null algorithm")
+    elif abs(current_algorithm % 4) == 2:
+        setHostAPsTravisAlgorithm()
+        print("Travis' Algorithm")
+    elif abs(current_algorithm % 4) == 3:
+        setHostAPsTravisAlgorithmExtended()
+        print("Travis' Algorithm Extended")
+    else:
+        setHostAPsIanAlgorithm(5, hosts, AP)
+        print("Ian's Algorithm")
     refreshHostSignalDistances()
-    printInterferenceStats()
+    #printInterferenceStats()
     
     
 #Randomly generate some hosts for the network
@@ -96,6 +102,7 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
 def setHostAPsNullAlgorithm():
     for host in hosts:
         host['myAP'] = AP 
+        host['nodeColor'] = 0
     
 ##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
 def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
@@ -138,9 +145,27 @@ def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
                     setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
         
     
-            
+def setHostAPsTravisAlgorithmExtended():
+    
+    global AP
+    global hosts
+    
+    setHostAPsTravisAlgorithm()
+    
+    currentSubs = []
+    for host in hosts:
+        if host['myAP'] == AP:
+            currentSubs.append(host)
+                  
+    for host in hosts:
+        if host in currentSubs:
+            continue
+        distances = []
+        for subAP in currentSubs:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = currentSubs[distances.index(min(distances))]
         
-        
+                        
 def setHostAPsTravisAlgorithm():
     subAPs = []
     global hosts
@@ -162,7 +187,7 @@ def setHostAPsTravisAlgorithm():
 def setSurroundingHostsAP(subAP):
     tempHosts = sorted(hosts, key=lambda k: distanceBetweenHosts(subAP, k) - subAP['signalDistance']) 
     
-    print "subAP signalDistance: " + str(subAP['signalDistance'])
+    #print "subAP signalDistance: " + str(subAP['signalDistance'])
     
     numberOfHosts = 0
     for host in tempHosts:
