@@ -189,7 +189,15 @@ def mousePressed():
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - AP['x']) <= 25 and abs(mouseY- AP['y']) <= 25):
         AP['showInterference'] = not AP['showInterference']
-       
+
+#Called when key is pressed -- Holy shit no way?
+def keyPressed(): 
+    global hosts
+    # refreshes screen with new topology
+    if key == 'r' or key == 'R': 
+        hosts = randomlyGenerateHosts(num_hosts)
+        refreshTopology() 
+        print "refreshing"
          
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
