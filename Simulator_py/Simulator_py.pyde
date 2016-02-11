@@ -3,7 +3,7 @@
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-num_hosts = 50
+num_hosts = 500
 show_stats = False
 current_algorithm = 1
 total_number_algorithms = 5
@@ -299,7 +299,7 @@ def keyPressed():
         if current_randomization_pattern %2 == 1:
             hosts = randomlyGenerateHosts(num_hosts)
         else:
-            hosts = randomlyGenerateHostsInGroups(10,10,50)
+            hosts = randomlyGenerateHostsInGroups(10, 50, num_hosts)
         refreshTopology() 
     if key == ' ' and show_stats:
         show_stats = False
