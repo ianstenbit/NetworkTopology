@@ -156,11 +156,11 @@ def setHostAPsErikAlgorithm():
     hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
     temp = hosts
     subAPs = []
-    for i in range(5):
+    for i in range(4):
        hosts[i]['myAP'] = AP
        hosts[i]['nodeColor'] = 0 
        subAPs.append(hosts[i])
-    for host in hosts[5:]: 
+    for host in hosts[4:]: 
        temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
        for h in temp_hosts:
            if h in subAPs:
