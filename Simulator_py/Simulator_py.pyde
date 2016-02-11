@@ -6,6 +6,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 50
 show_stats = False
 current_algorithm = 1
+total_number_algorithms = 5
 current_randomization_pattern = 1
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
@@ -65,15 +66,18 @@ def refreshTopology():
     global current_algorithm
     global hosts
     global AP
-    if abs(current_algorithm % 4) == 1:
+    if abs(current_algorithm % total_number_algorithms) == 1:
         setHostAPsNullAlgorithm()
         print("Null algorithm")
-    elif abs(current_algorithm % 4) == 2:
+    elif abs(current_algorithm % total_number_algorithms) == 2:
         setHostAPsTravisAlgorithm()
         print("Travis' Algorithm")
-    elif abs(current_algorithm % 4) == 3:
+    elif abs(current_algorithm % total_number_algorithms) == 3:
         setHostAPsTravisAlgorithmExtended()
         print("Travis' Algorithm Extended")
+    elif abs(current_algorithm % total_number_algorithms) == 4:
+        setHostAPsErikAlgorithm()
+        print("Erik's Algorithm")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
@@ -143,7 +147,28 @@ def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
                         subHosts.append(compare)
                 if(len(subHosts) >= numSubAPs/2):
                     setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
-        
+
+def setHostAPsErikAlgorithm():
+    global AP
+    global hosts
+    for host in hosts:
+        host['myAP'] = None
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+    temp = hosts
+    subAPs = []
+    for i in range(5):
+       hosts[i]['myAP'] = AP
+       hosts[i]['nodeColor'] = 0 
+       subAPs.append(hosts[i])
+    for host in hosts[5:]: 
+       temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+       for h in temp_hosts:
+           if h in subAPs:
+               host['myAP'] = h
+               subAPs.append(host)
+               host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+               break
+       host['nodeColor'] = 0
     
 def setHostAPsTravisAlgorithmExtended():
     
@@ -221,8 +246,8 @@ def draw():
         if host['nodeColor'] == 1:
             fill(255,0,0)
             ellipse(x, y, 20, 20)
-        else: 
-            ellipse(x, y, 10,10)
+        else:
+            ellipse(x, y, 10, 10)
         bandwidth = host['bandwidth']
         drawLineBetweenHosts(host, host['myAP'])
         if(host['showInterference'] or AP['showInterference']):
