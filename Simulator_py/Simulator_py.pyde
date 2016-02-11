@@ -2,7 +2,7 @@
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-num_hosts = 500
+num_hosts = 100
 show_stats = False
 current_algorithm = 1
 total_number_algorithms = 5
