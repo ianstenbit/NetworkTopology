@@ -157,7 +157,7 @@ def setSurroundingHostsAP(subAP):
             numberOfHosts += 1
             
             # arbitrary number (should make this max number of hosts meaningful)
-            if numberOfHosts > 5:
+            if numberOfHosts > 6:
                 return
 
 
