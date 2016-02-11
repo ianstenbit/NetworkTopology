@@ -3,9 +3,11 @@
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-num_hosts = 50
+num_hosts = 500
 show_stats = False
 current_algorithm = 1
+total_number_algorithms = 5
+current_randomization_pattern = 1
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
 
@@ -62,12 +64,25 @@ def refreshHostSignalDistances():
 
 def refreshTopology():
     global current_algorithm
-    if abs(current_algorithm % 3) == 1:
-        setHostAPsIanAlgorithm(5)
-    elif abs(current_algorithm % 3) == 2:
+    global hosts
+    global AP
+    if abs(current_algorithm % total_number_algorithms) == 1:
+        setHostAPsNullAlgorithm()
+        print("Null algorithm")
+    elif abs(current_algorithm % total_number_algorithms) == 2:
         setHostAPsTravisAlgorithm()
+        print("Travis' Algorithm")
+    elif abs(current_algorithm % total_number_algorithms) == 3:
+        setHostAPsTravisAlgorithmExtended()
+        print("Travis' Algorithm Extended")
+    elif abs(current_algorithm % total_number_algorithms) == 4:
+        setHostAPsErikAlgorithm()
+        print("Erik's Algorithm")
+    else:
+        setHostAPsIanAlgorithm(5, hosts, AP)
+        print("Ian's Algorithm")
     refreshHostSignalDistances()
-    printInterferenceStats()
+    #printInterferenceStats()
     
     
 #Randomly generate some hosts for the network
@@ -91,16 +106,17 @@ def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
 def setHostAPsNullAlgorithm():
     for host in hosts:
         host['myAP'] = AP 
+        host['nodeColor'] = 0
     
 ##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
-def setHostAPsIanAlgorithm(numSubAPs):
+def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
     
-    global hosts
+    global AP
     
     for host in hosts:
         host['myAP'] = host
     
-    for i in range(numSubAPs):
+    for i in range(min(numSubAPs, len(hosts))):
         for host in hosts:
             distanceSum = 0
             host['distanceSum'] = 0
@@ -113,7 +129,7 @@ def setHostAPsIanAlgorithm(numSubAPs):
             
         
         hosts = sorted(hosts, key=lambda k:  k['distanceSum'])
-        hosts[i]['myAP'] = AP
+        hosts[i]['myAP'] = baseAP
         
     for host in hosts[numSubAPs:]:
         distances = []
@@ -122,10 +138,59 @@ def setHostAPsIanAlgorithm(numSubAPs):
         host['myAP'] = hosts[distances.index(min(distances))]
         host['nodeColor'] = 0
         
+    if AP == baseAP:
+        for host in hosts:
+            if host['myAP'] == AP:
+                subHosts = []
+                for compare in hosts:
+                    if compare['myAP'] == host:
+                        subHosts.append(compare)
+                if(len(subHosts) >= numSubAPs/2):
+                    setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
+
+def setHostAPsErikAlgorithm():
+    global AP
+    global hosts
+    for host in hosts:
+        host['myAP'] = None
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+    temp = hosts
+    subAPs = []
+    for i in range(4):
+       hosts[i]['myAP'] = AP
+       hosts[i]['nodeColor'] = 0 
+       subAPs.append(hosts[i])
+    for host in hosts[4:]: 
+       temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+       for h in temp_hosts:
+           if h in subAPs:
+               host['myAP'] = h
+               subAPs.append(host)
+               host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+               break
+       host['nodeColor'] = 0
     
-            
+def setHostAPsTravisAlgorithmExtended():
+    
+    global AP
+    global hosts
+    
+    setHostAPsTravisAlgorithm()
+    
+    currentSubs = []
+    for host in hosts:
+        if host['myAP'] == AP:
+            currentSubs.append(host)
+                  
+    for host in hosts:
+        if host in currentSubs:
+            continue
+        distances = []
+        for subAP in currentSubs:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = currentSubs[distances.index(min(distances))]
         
-        
+                        
 def setHostAPsTravisAlgorithm():
     subAPs = []
     global hosts
@@ -147,7 +212,7 @@ def setHostAPsTravisAlgorithm():
 def setSurroundingHostsAP(subAP):
     tempHosts = sorted(hosts, key=lambda k: distanceBetweenHosts(subAP, k) - subAP['signalDistance']) 
     
-    print "subAP signalDistance: " + str(subAP['signalDistance'])
+    #print "subAP signalDistance: " + str(subAP['signalDistance'])
     
     numberOfHosts = 0
     for host in tempHosts:
@@ -181,8 +246,8 @@ def draw():
         if host['nodeColor'] == 1:
             fill(255,0,0)
             ellipse(x, y, 20, 20)
-        else: 
-            ellipse(x, y, 10,10)
+        else:
+            ellipse(x, y, 10, 10)
         bandwidth = host['bandwidth']
         drawLineBetweenHosts(host, host['myAP'])
         if(host['showInterference'] or AP['showInterference']):
@@ -196,7 +261,7 @@ def draw():
         
     noStroke() 
     fill(0,0,255)
-    ellipse(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 50, 50)
+    ellipse(AP['x'], AP['y'], 50, 50)
     
 #Called when the mouse is pressed -- I know, profound.
 def mousePressed():
@@ -228,27 +293,34 @@ def keyPressed():
     global hosts
     global show_stats
     global current_algorithm
+    global current_randomization_pattern
     # refreshes screen with new topology
     if key == 'r' or key == 'R': 
-        hosts = randomlyGenerateHosts(num_hosts)
+        if current_randomization_pattern %2 == 1:
+            hosts = randomlyGenerateHosts(num_hosts)
+        else:
+            hosts = randomlyGenerateHostsInGroups(10, 50, num_hosts)
         refreshTopology() 
     if key == ' ' and show_stats:
         show_stats = False
     elif key == ' ':
         show_stats = True
-    if keyCode == RIGHT:
+    elif keyCode == RIGHT:
         current_algorithm = current_algorithm + 1
         refreshTopology()
-    if keyCode == LEFT:
+    elif keyCode == LEFT:
         current_algorithm = current_algorithm - 1
         refreshTopology()
+    elif keyCode == UP:
+        current_randomization_pattern = current_randomization_pattern + 1
+    elif keyCode == DOWN:
+        current_randomization_pattern = current_randomization_pattern - 1
         
         
-         
+#The AP is going to be centered by default, but this should be changeable (not all networks have centered AP)         
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
 hosts = randomlyGenerateHosts(num_hosts)
-#hosts = randomlyGenerateHostsInGroups(10,10,50)
 
 refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
