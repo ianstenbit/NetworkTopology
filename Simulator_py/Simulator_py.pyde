@@ -1,13 +1,38 @@
 
-
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-num_hosts = 50
+num_hosts = 100
 show_stats = False
 current_algorithm = 1
 total_number_algorithms = 6
 current_randomization_pattern = 1
+
+
+
+
+
+##############This is some statistics code from StackOverflow which I'm using for standard deviation##############
+
+def _ss(data):
+    """Return sum of square deviations of sequence data."""
+    c = (sum(data) + 0.0 )/len(data)
+    ss = sum((x-c)**2 for x in data)
+    return ss
+
+def pstdev(data):
+    """Calculates the population standard deviation."""
+    n = len(data)
+    if n < 2:
+        raise ValueError('variance requires at least two data points')
+    ss = _ss(data)
+    pvar = ss/n # the population variance
+    return pvar**0.5
+
+##############This is some statistics code from StackOverflow which I'm using for standard deviation##############
+
+
+
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
 
@@ -21,40 +46,88 @@ def distanceBetweenHosts(h1, h2):
 def drawLineBetweenHosts(h1, h2):
     line(h1['x'], h1['y'], h2['x'], h2['y'])
 
-def printInterferenceStats():
-    totalInterference = 0
-    for host in hosts:
-        x = host['x']
-        y = host['y']
+# def printInterferenceStats():
+    
+#     totalInterference = []
+#     totalHops = []
+#     totalDistance = []
+    
+    
+#     for host in hosts:
+#         x = host['x']
+#         y = host['y']
         
-        for compare in hosts:
-            if(distanceBetweenHosts(host, compare) < host['signalDistance']):
-                totalInterference = totalInterference + 1
+#         interference = 0
+#         hops = 0
+#         distance = 0
         
-    print "Average number of interfering nodes per node: "
-    print (totalInterference + 0.0) / len(hosts)
-    print "Number of nodes:"
-    print len(hosts)
-    print "Number of interferences:"
-    print totalInterference
+#         for compare in hosts:
+#             if(distanceBetweenHosts(host, compare) < host['signalDistance']):
+#                 interference = interference + 1
+                
+#         totalInterference.append(interference)
+#         totalHops.append(hops)
+#         totalDistance.append(distance)
+        
+        
+#     print "Average number of interfering nodes per node: "
+#     print (totalInterference + 0.0) / len(hosts)
+#     print "Number of nodes:"
+#     print len(hosts)
+#     print "Number of interferences:"
+#     print totalInterference
     
 def show_statistics():
-    fill(0, 102, 153)
-    totalInterference = 0
+    fill(0, 0, 0, 200)
+    rect(0,0,365,155)
+    
+    fill(255)
+    
+    global AP
+    
+    totalInterference = []
+    totalHops = []
+    totalDistance = []
+    
+    
     for host in hosts:
         x = host['x']
         y = host['y']
         
+        interference = 0
+        hops = 0
+        distance = distanceBetweenHosts(host, host['myAP']) 
+        
+                        
         for compare in hosts:
             if(distanceBetweenHosts(host, compare) < host['signalDistance']):
-                totalInterference = totalInterference + 1
+                interference = interference + 1
+                
+        hostTmp = host['myAP']
         
-    text("Average number of interfering nodes per node: ", 10, 10)
-    text ((totalInterference + 0.0) / len(hosts), 300, 10)
-    text ("Number of nodes: ", 10, 30)
-    text (len(hosts), 120, 30)
-    text ("Number of interferences:", 10, 50)
-    text (totalInterference, 170, 50)
+        while hostTmp != AP:
+            hops = hops + 1
+            distance += distanceBetweenHosts(hostTmp, hostTmp ['myAP'])
+            hostTmp = hostTmp['myAP']
+                
+        totalInterference.append(interference)
+        totalHops.append(hops)
+        totalDistance.append(distance)
+        
+    text("Average number of interfering nodes per node: ", 10, 40)
+    text ((sum(totalInterference) + 0.0) / len(hosts), 300, 40)
+    text ("Standard deviation: +/-", 10,60)
+    text ('%.3f'%(pstdev(totalInterference)), 155, 60)
+    text ("Number of nodes: ", 10, 20)
+    text (len(hosts), 120, 20)
+    text("Average number of hops to AP: ", 10, 80)
+    text ((sum(totalHops) + 0.0) / len(hosts), 200,80)
+    text ("Standard deviation: +/-", 10, 100)
+    text ('%.3f'%(pstdev(totalHops)), 155, 100)
+    text("Average signal distance travelled to AP: ", 10, 120)
+    text ((sum(totalDistance) + 0.0) / len(hosts), 250, 120)
+    text ("Standard deviation: +/-", 10, 140)
+    text ('%.3f'%(pstdev(totalDistance)), 155, 140)
                            
 def refreshHostSignalDistances():
     for host in hosts:
@@ -85,7 +158,6 @@ def refreshTopology():
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
     refreshHostSignalDistances()
-    #printInterferenceStats()
     
     
 #Randomly generate some hosts for the network
@@ -258,7 +330,7 @@ def setSurroundingHostsAP(subAP):
             numberOfHosts += 1
             
             # arbitrary number (should make this max number of hosts meaningful)
-            if numberOfHosts > 5:
+            if numberOfHosts > 6:
                 return
 
 
@@ -336,7 +408,7 @@ def keyPressed():
         if current_randomization_pattern %2 == 1:
             hosts = randomlyGenerateHosts(num_hosts)
         else:
-            hosts = randomlyGenerateHostsInGroups(10,10,50)
+            hosts = randomlyGenerateHostsInGroups(10, 50, num_hosts)
         refreshTopology() 
     if key == ' ' and show_stats:
         show_stats = False
