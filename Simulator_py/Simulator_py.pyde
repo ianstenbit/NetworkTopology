@@ -6,7 +6,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 50
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 5
+total_number_algorithms = 6
 current_randomization_pattern = 1
 
 #A host is created using a dictionary, so we can add/remove attributes as we please
@@ -76,8 +76,11 @@ def refreshTopology():
         setHostAPsTravisAlgorithmExtended()
         print("Travis' Algorithm Extended")
     elif abs(current_algorithm % total_number_algorithms) == 4:
+        setHostAPsErikAlgorithm2()
+        print("Erik's Algorithm: Bandwidth/Distance Greedy")
+    elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsErikAlgorithm()
-        print("Erik's Algorithm")
+        print("Erik's Algorithm: Distance Greedy")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
@@ -89,7 +92,7 @@ def refreshTopology():
 def randomlyGenerateHosts(num):
     hosts = []
     for i in range(num):
-        hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(50)))
+        hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(10)))
     return hosts
 
 def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
@@ -168,6 +171,39 @@ def setHostAPsErikAlgorithm():
                subAPs.append(host)
                host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
                break
+       host['nodeColor'] = 0
+       
+def setHostAPsErikAlgorithm2():
+    # A combination of distance greedy and bandwidth. host will first 
+    # look for a subAP with large bandwidth within a certain range then settle for the closest host 
+    global AP
+    global hosts
+    for host in hosts:
+        host['myAP'] = None
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+    temp = hosts
+    subAPs = []
+    for i in range(4):
+       hosts[i]['myAP'] = AP
+       hosts[i]['nodeColor'] = 0 
+       subAPs.append(hosts[i])
+    for host in hosts[4:]: 
+       assigned = False
+       temp_hosts = sorted(hosts, key=lambda k: k['bandwidth'], reverse=True)
+       closest_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+       for h in temp_hosts:
+           if h in subAPs and distanceBetweenHosts(host, h) < 200:
+               host['myAP'] = h
+               subAPs.append(host)
+               host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+               assigned = True
+               break
+       if not assigned:
+           host['myAP'] = closest_hosts[i]
+           subAPs.append(host)
+           host['signalDistance'] = sqrt((host['x'] - closest_hosts[i]['x'])**2 + (host['y'] - closest_hosts[i]['y'])**2)
+               
+           
        host['nodeColor'] = 0
     
 def setHostAPsTravisAlgorithmExtended():
@@ -280,13 +316,14 @@ def mousePressed():
             clickedOnHost = True
             break
         
-    if(not clickedOnHost):
-        hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
-        refreshTopology()
-        
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - AP['x']) <= 25 and abs(mouseY- AP['y']) <= 25):
         AP['showInterference'] = not AP['showInterference']
+    elif(not clickedOnHost):
+        hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
+        refreshTopology()
+        
+    
 
 #Called when key is pressed -- Holy shit no way?
 def keyPressed(): 
