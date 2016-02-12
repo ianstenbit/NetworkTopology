@@ -247,7 +247,8 @@ def setHostAPsErikAlgorithm():
        
 def setHostAPsErikAlgorithm2():
     # A combination of distance greedy and bandwidth. host will first 
-    # look for a subAP with large bandwidth within a certain range then settle for the closest host 
+    # look for a subAP with large bandwidth within a certain range then settle for the closest host
+    # -- edit this to make it be a combination of closest node/least amount of hops between host and AP 
     global AP
     global hosts
     for host in hosts:
