@@ -10,8 +10,6 @@ current_randomization_pattern = 1
 
 
 
-
-
 ##############This is some statistics code from StackOverflow which I'm using for standard deviation##############
 
 def _ss(data):
@@ -79,7 +77,7 @@ def drawLineBetweenHosts(h1, h2):
     
 def show_statistics():
     fill(0, 0, 0, 200)
-    rect(0,0,365,155)
+    rect(0,0,365,165)
     
     fill(255)
     
@@ -88,6 +86,7 @@ def show_statistics():
     totalInterference = []
     totalHops = []
     totalDistance = []
+    totalTraffic = 0
     
     
     for host in hosts:
@@ -114,6 +113,8 @@ def show_statistics():
         totalHops.append(hops)
         totalDistance.append(distance)
         
+        totalTraffic = totalTraffic + ((hops + 1) * host['bandwidth'])
+        
     text("Average number of interfering nodes per node: ", 10, 40)
     text ((sum(totalInterference) + 0.0) / len(hosts), 300, 40)
     text ("Standard deviation: +/-", 10,60)
@@ -128,6 +129,8 @@ def show_statistics():
     text ((sum(totalDistance) + 0.0) / len(hosts), 250, 120)
     text ("Standard deviation: +/-", 10, 140)
     text ('%.3f'%(pstdev(totalDistance)), 155, 140)
+    text ("Total Traffic: ", 10, 160)
+    text (totalTraffic , 80, 160)
                            
 def refreshHostSignalDistances():
     for host in hosts:
