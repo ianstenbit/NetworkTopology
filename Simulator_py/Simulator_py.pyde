@@ -1,4 +1,4 @@
-
+import csv
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
@@ -46,45 +46,8 @@ def distanceBetweenHosts(h1, h2):
 def drawLineBetweenHosts(h1, h2):
     line(h1['x'], h1['y'], h2['x'], h2['y'])
 
-# def printInterferenceStats():
-    
-#     totalInterference = []
-#     totalHops = []
-#     totalDistance = []
-    
-    
-#     for host in hosts:
-#         x = host['x']
-#         y = host['y']
-        
-#         interference = 0
-#         hops = 0
-#         distance = 0
-        
-#         for compare in hosts:
-#             if(distanceBetweenHosts(host, compare) < host['signalDistance']):
-#                 interference = interference + 1
-                
-#         totalInterference.append(interference)
-#         totalHops.append(hops)
-#         totalDistance.append(distance)
-        
-        
-#     print "Average number of interfering nodes per node: "
-#     print (totalInterference + 0.0) / len(hosts)
-#     print "Number of nodes:"
-#     print len(hosts)
-#     print "Number of interferences:"
-#     print totalInterference
-    
-def show_statistics():
-    fill(0, 0, 0, 200)
-    rect(0,0,365,155)
-    
-    fill(255)
-    
+def getInterferenceStats():
     global AP
-    
     totalInterference = []
     totalHops = []
     totalDistance = []
@@ -113,21 +76,38 @@ def show_statistics():
         totalInterference.append(interference)
         totalHops.append(hops)
         totalDistance.append(distance)
+    
+    return {'interference': (sum(totalInterference) + 0.0) / len(hosts),
+        'sd_interference': (pstdev(totalInterference)),
+        'nodes': len(hosts),
+        'hops': (sum(totalHops) + 0.0) / len(hosts),
+        'sd_hops': pstdev(totalHops),
+        'distance': (sum(totalDistance) + 0.0) / len(hosts),
+        'sd_dist': (pstdev(totalDistance))}
+                
+                
+def show_statistics():
+    fill(0, 0, 0, 200)
+    rect(0,0,365,155)
+    
+    fill(255)
+    
+    stats = getInterferenceStats()
         
     text("Average number of interfering nodes per node: ", 10, 40)
-    text ((sum(totalInterference) + 0.0) / len(hosts), 300, 40)
+    text (stats['interference'], 300, 40)
     text ("Standard deviation: +/-", 10,60)
-    text ('%.3f'%(pstdev(totalInterference)), 155, 60)
+    text ('%.3f'%(stats['sd_interference']), 155, 60)
     text ("Number of nodes: ", 10, 20)
-    text (len(hosts), 120, 20)
+    text (stats['nodes'], 120, 20)
     text("Average number of hops to AP: ", 10, 80)
-    text ((sum(totalHops) + 0.0) / len(hosts), 200,80)
+    text (stats['hops'], 200,80)
     text ("Standard deviation: +/-", 10, 100)
-    text ('%.3f'%(pstdev(totalHops)), 155, 100)
+    text ('%.3f'%(stats['sd_hops']), 155, 100)
     text("Average signal distance travelled to AP: ", 10, 120)
-    text ((sum(totalDistance) + 0.0) / len(hosts), 250, 120)
+    text (stats['distance'], 250, 120)
     text ("Standard deviation: +/-", 10, 140)
-    text ('%.3f'%(pstdev(totalDistance)), 155, 140)
+    text ('%.3f'%(stats['sd_dist']), 155, 140)
                            
 def refreshHostSignalDistances():
     for host in hosts:
@@ -430,7 +410,31 @@ def keyPressed():
 #The AP is going to be centered by default, but this should be changeable (not all networks have centered AP)         
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
-hosts = randomlyGenerateHosts(num_hosts)
+#hosts = randomlyGenerateHosts(num_hosts)
 
-refreshTopology()
+#refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
+
+
+for numHost in range(50, 100, 50):  
+    hosts = randomlyGenerateHosts(numHost)
+    show_stats=True
+    for alg in range(1, total_number_algorithms+1):
+        current_algorithm = alg
+        refreshTopology()
+        stats = getInterferenceStats()
+        print "Average number of interfering nodes per node: ",
+        print stats['interference']
+        print "Standard deviation: +/-",
+        print '%.3f'%(stats['sd_interference'])
+        print "Number of nodes:",
+        print stats['nodes']
+        print "Average number of hops to AP: ",
+        print stats['hops']
+        print "Standard deviation: +/-",
+        print stats['sd_hops']
+        print "Average signal distance travelled to AP: ",
+        print stats['distance']
+        print "Standard deviation: +/-", 
+        print '%.3f'%(stats['sd_dist'])
+ 
