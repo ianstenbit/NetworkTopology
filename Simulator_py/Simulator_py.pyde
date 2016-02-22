@@ -415,26 +415,17 @@ AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
 #refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
-
-for numHost in range(50, 100, 50):  
-    hosts = randomlyGenerateHosts(numHost)
-    show_stats=True
-    for alg in range(1, total_number_algorithms+1):
-        current_algorithm = alg
-        refreshTopology()
-        stats = getInterferenceStats()
-        print "Average number of interfering nodes per node: ",
-        print stats['interference']
-        print "Standard deviation: +/-",
-        print '%.3f'%(stats['sd_interference'])
-        print "Number of nodes:",
-        print stats['nodes']
-        print "Average number of hops to AP: ",
-        print stats['hops']
-        print "Standard deviation: +/-",
-        print stats['sd_hops']
-        print "Average signal distance travelled to AP: ",
-        print stats['distance']
-        print "Standard deviation: +/-", 
-        print '%.3f'%(stats['sd_dist'])
- 
+#get statistics and write out to csv
+with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
+    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    for numHost in range(50, 500, 50):  
+        hosts = randomlyGenerateHosts(numHost)
+        show_stats=True
+        for alg in range(1, total_number_algorithms+1):
+            current_algorithm = alg
+            refreshTopology()
+            stats = (getInterferenceStats())
+            stats['algorithm'] = current_algorithm
+            writer.writerow(stats)
