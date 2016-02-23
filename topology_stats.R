@@ -1,0 +1,6 @@
+data <- read.csv('stats.csv')
+summary(data)
+data$algorithm <- as.factor(data$algorithm)
+plot(data$nodes, data$interference, col=data$algorithm, pch=20, main="Interference for different algorithms")
+legend(x='topleft', legend=names(summary(data$algorithm)), col=data$algorithm, lwd=1, cex=.5)
+pairs(data[, c("nodes", "interference", "hops", "distance", "totalTraffic")], col=data$algorithm, pch=20)

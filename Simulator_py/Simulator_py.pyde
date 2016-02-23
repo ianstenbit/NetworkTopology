@@ -43,38 +43,6 @@ def distanceBetweenHosts(h1, h2):
 
 def drawLineBetweenHosts(h1, h2):
     line(h1['x'], h1['y'], h2['x'], h2['y'])
-
-<<<<<<< HEAD
-# def printInterferenceStats():
-    
-#     totalInterference = []
-#     totalHops = []
-#     totalDistance = []
-    
-    
-#     for host in hosts:
-#         x = host['x']
-#         y = host['y']
-        
-#         interference = 0
-#         hops = 0
-#         distance = 0
-        
-#         for compare in hosts:
-#             if(distanceBetweenHosts(host, compare) < host['signalDistance']):
-#                 interference = interference + 1
-                
-#         totalInterference.append(interference)
-#         totalHops.append(hops)
-#         totalDistance.append(distance)
-        
-        
-#     print "Average number of interfering nodes per node: "
-#     print (totalInterference + 0.0) / len(hosts)
-#     print "Number of nodes:"
-#     print len(hosts)
-#     print "Number of interferences:"
-#     print totalInterference
     
 def show_statistics():
     fill(0, 0, 0, 200)
@@ -82,9 +50,8 @@ def show_statistics():
     
     fill(255)
     
-=======
+    
 def getInterferenceStats():
->>>>>>> b446aa3744346b698ff4ff35d7a8d2d443efa400
     global AP
     totalInterference = []
     totalHops = []
@@ -115,6 +82,8 @@ def getInterferenceStats():
         totalInterference.append(interference)
         totalHops.append(hops)
         totalDistance.append(distance)
+        totalTraffic = totalTraffic + ((hops + 1) * host['bandwidth'])
+
     
     return {'interference': (sum(totalInterference) + 0.0) / len(hosts),
         'sd_interference': (pstdev(totalInterference)),
@@ -122,7 +91,8 @@ def getInterferenceStats():
         'hops': (sum(totalHops) + 0.0) / len(hosts),
         'sd_hops': pstdev(totalHops),
         'distance': (sum(totalDistance) + 0.0) / len(hosts),
-        'sd_dist': (pstdev(totalDistance))}
+        'sd_dist': (pstdev(totalDistance)),
+        'totalTraffic': totalTraffic}
                 
                 
 def show_statistics():
@@ -132,8 +102,7 @@ def show_statistics():
     fill(255)
     
     stats = getInterferenceStats()
-        
-        totalTraffic = totalTraffic + ((hops + 1) * host['bandwidth'])
+    #totalTraffic = totalTraffic + ((hops + 1) * host['bandwidth'])
         
     text("Average number of interfering nodes per node: ", 10, 40)
     text (stats['interference'], 300, 40)
@@ -148,14 +117,11 @@ def show_statistics():
     text("Average signal distance travelled to AP: ", 10, 120)
     text (stats['distance'], 250, 120)
     text ("Standard deviation: +/-", 10, 140)
-<<<<<<< HEAD
-    text ('%.3f'%(pstdev(totalDistance)), 155, 140)
-    text ("Total Traffic: ", 10, 160)
-    text (totalTraffic , 80, 160)
-=======
     text ('%.3f'%(stats['sd_dist']), 155, 140)
->>>>>>> b446aa3744346b698ff4ff35d7a8d2d443efa400
-                           
+    text ("Total Traffic: ", 10, 160)
+    text (stats['totalTraffic'] , 80, 160)
+
+                                                      
 def refreshHostSignalDistances():
     for host in hosts:
         myAP = host['myAP']
@@ -464,7 +430,7 @@ AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
 
 #get statistics and write out to csv
 with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
-    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist']
+    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     for numHost in range(50, 500, 50):  
