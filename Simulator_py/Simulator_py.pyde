@@ -1,11 +1,11 @@
-
+import csv
 # Global Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 num_hosts = 100
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 5
+total_number_algorithms = 6
 current_randomization_pattern = 1
 
 
@@ -44,6 +44,7 @@ def distanceBetweenHosts(h1, h2):
 def drawLineBetweenHosts(h1, h2):
     line(h1['x'], h1['y'], h2['x'], h2['y'])
 
+<<<<<<< HEAD
 # def printInterferenceStats():
     
 #     totalInterference = []
@@ -81,8 +82,10 @@ def show_statistics():
     
     fill(255)
     
+=======
+def getInterferenceStats():
+>>>>>>> b446aa3744346b698ff4ff35d7a8d2d443efa400
     global AP
-    
     totalInterference = []
     totalHops = []
     totalDistance = []
@@ -112,25 +115,46 @@ def show_statistics():
         totalInterference.append(interference)
         totalHops.append(hops)
         totalDistance.append(distance)
+    
+    return {'interference': (sum(totalInterference) + 0.0) / len(hosts),
+        'sd_interference': (pstdev(totalInterference)),
+        'nodes': len(hosts),
+        'hops': (sum(totalHops) + 0.0) / len(hosts),
+        'sd_hops': pstdev(totalHops),
+        'distance': (sum(totalDistance) + 0.0) / len(hosts),
+        'sd_dist': (pstdev(totalDistance))}
+                
+                
+def show_statistics():
+    fill(0, 0, 0, 200)
+    rect(0,0,365,155)
+    
+    fill(255)
+    
+    stats = getInterferenceStats()
         
         totalTraffic = totalTraffic + ((hops + 1) * host['bandwidth'])
         
     text("Average number of interfering nodes per node: ", 10, 40)
-    text ((sum(totalInterference) + 0.0) / len(hosts), 300, 40)
+    text (stats['interference'], 300, 40)
     text ("Standard deviation: +/-", 10,60)
-    text ('%.3f'%(pstdev(totalInterference)), 155, 60)
+    text ('%.3f'%(stats['sd_interference']), 155, 60)
     text ("Number of nodes: ", 10, 20)
-    text (len(hosts), 120, 20)
+    text (stats['nodes'], 120, 20)
     text("Average number of hops to AP: ", 10, 80)
-    text ((sum(totalHops) + 0.0) / len(hosts), 200,80)
+    text (stats['hops'], 200,80)
     text ("Standard deviation: +/-", 10, 100)
-    text ('%.3f'%(pstdev(totalHops)), 155, 100)
+    text ('%.3f'%(stats['sd_hops']), 155, 100)
     text("Average signal distance travelled to AP: ", 10, 120)
-    text ((sum(totalDistance) + 0.0) / len(hosts), 250, 120)
+    text (stats['distance'], 250, 120)
     text ("Standard deviation: +/-", 10, 140)
+<<<<<<< HEAD
     text ('%.3f'%(pstdev(totalDistance)), 155, 140)
     text ("Total Traffic: ", 10, 160)
     text (totalTraffic , 80, 160)
+=======
+    text ('%.3f'%(stats['sd_dist']), 155, 140)
+>>>>>>> b446aa3744346b698ff4ff35d7a8d2d443efa400
                            
 def refreshHostSignalDistances():
     for host in hosts:
@@ -152,8 +176,11 @@ def refreshTopology():
         setHostAPsTravisAlgorithmExtended()
         print("Travis' Algorithm Extended")
     elif abs(current_algorithm % total_number_algorithms) == 4:
+        setHostAPsErikAlgorithm2()
+        print("Erik's Algorithm: Bandwidth/Distance Greedy")
+    elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsErikAlgorithm()
-        print("Erik's Algorithm")
+        print("Erik's Algorithm: Distance Greedy")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
@@ -164,7 +191,7 @@ def refreshTopology():
 def randomlyGenerateHosts(num):
     hosts = []
     for i in range(num):
-        hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(50)))
+        hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(10)))
     return hosts
 
 def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
@@ -243,6 +270,40 @@ def setHostAPsErikAlgorithm():
                subAPs.append(host)
                host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
                break
+       host['nodeColor'] = 0
+       
+def setHostAPsErikAlgorithm2():
+    # A combination of distance greedy and bandwidth. host will first 
+    # look for a subAP with large bandwidth within a certain range then settle for the closest host
+    # -- edit this to make it be a combination of closest node/least amount of hops between host and AP 
+    global AP
+    global hosts
+    for host in hosts:
+        host['myAP'] = None
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+    temp = hosts
+    subAPs = []
+    for i in range(4):
+       hosts[i]['myAP'] = AP
+       hosts[i]['nodeColor'] = 0 
+       subAPs.append(hosts[i])
+    for host in hosts[4:]: 
+       assigned = False
+       temp_hosts = sorted(hosts, key=lambda k: k['bandwidth'], reverse=True)
+       closest_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+       for h in temp_hosts:
+           if h in subAPs and distanceBetweenHosts(host, h) < 200:
+               host['myAP'] = h
+               subAPs.append(host)
+               host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+               assigned = True
+               break
+       if not assigned:
+           host['myAP'] = closest_hosts[i]
+           subAPs.append(host)
+           host['signalDistance'] = sqrt((host['x'] - closest_hosts[i]['x'])**2 + (host['y'] - closest_hosts[i]['y'])**2)
+               
+           
        host['nodeColor'] = 0
     
 def setHostAPsTravisAlgorithmExtended():
@@ -355,13 +416,14 @@ def mousePressed():
             clickedOnHost = True
             break
         
-    if(not clickedOnHost):
-        hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
-        refreshTopology()
-        
     #If we clicked the AP, flip its showInterference attribute
     if(abs(mouseX - AP['x']) <= 25 and abs(mouseY- AP['y']) <= 25):
         AP['showInterference'] = not AP['showInterference']
+    elif(not clickedOnHost):
+        hosts.append(buildDefaultHostAtXY(mouseX, mouseY, random(50)))
+        refreshTopology()
+        
+    
 
 #Called when key is pressed -- Holy shit no way?
 def keyPressed(): 
@@ -395,7 +457,22 @@ def keyPressed():
 #The AP is going to be centered by default, but this should be changeable (not all networks have centered AP)         
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
-hosts = randomlyGenerateHosts(num_hosts)
+#hosts = randomlyGenerateHosts(num_hosts)
 
-refreshTopology()
+#refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
+
+#get statistics and write out to csv
+with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
+    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    for numHost in range(50, 500, 50):  
+        hosts = randomlyGenerateHosts(numHost)
+        show_stats=True
+        for alg in range(1, total_number_algorithms+1):
+            current_algorithm = alg
+            refreshTopology()
+            stats = (getInterferenceStats())
+            stats['algorithm'] = current_algorithm
+            writer.writerow(stats)
