@@ -5,7 +5,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 100
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 6
+total_number_algorithms = 7
 current_randomization_pattern = 1
 
 
@@ -147,6 +147,9 @@ def refreshTopology():
     elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsErikAlgorithm()
         print("Erik's Algorithm: Distance Greedy")
+    elif abs(current_algorithm % total_number_algorithms) == 6:
+        setHostAPsIanAlgorithmRecursive()
+        print("Ian's Algorithm: Recursive")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
@@ -177,7 +180,7 @@ def setHostAPsNullAlgorithm():
         host['nodeColor'] = 0
     
 ##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
-def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
+def setHostAPsIanAlgorithmRecursive(numSubAPs, hosts, baseAP):
     
     global AP
     
@@ -215,6 +218,35 @@ def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
                         subHosts.append(compare)
                 if(len(subHosts) >= numSubAPs/2):
                     setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
+
+def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
+    
+    global AP
+    
+    for host in hosts:
+        host['myAP'] = host
+    
+    for i in range(min(numSubAPs, len(hosts))):
+        for host in hosts:
+            distanceSum = 0
+            host['distanceSum'] = 0
+            host['nodeColor'] = 1
+            for compare in hosts:
+                if(compare['myAP'] == host):
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)
+                else:
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)*999999999
+            
+        
+        hosts = sorted(hosts, key=lambda k:  k['distanceSum'])
+        hosts[i]['myAP'] = baseAP
+        
+    for host in hosts[numSubAPs:]:
+        distances = []
+        for subAP in hosts[:numSubAPs]:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = hosts[distances.index(min(distances))]
+        host['nodeColor'] = 0
 
 def setHostAPsErikAlgorithm():
     global AP
