@@ -1,9 +1,18 @@
 \documentclass{sigcomm-alternate}
 \usepackage[utf8]{inputenc}
+\usepackage{algorithm}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[noend]{algpseudocode}
 
-\title{Minimizing Wireless Traffic Interference Using Dynamically Reconfigured Hierarchical Network Topology}
+\title{Minimizing Wireless Traffic Interference for User-Rich LANs With Dynamically Reconfigured Hierarchical Network Topologies}
 \author{Erik Gabrielsen, Ian Johnson, Danh Nguyen, Gavin Pham, Alex Saladna, Travis Siems\\ \{egabrielsen, ianj, danhn, gpham, asaladna, tsiems\}@smu.edu}
-\date{January 2016}
+\date{March 2016}
+
+% Your interim draft is an early draft of your final paper, and it should be written with the end in mind. Your interim draft should be at least 3 pages in length, have the basic structure of your final paper including most, if not all, of your references, and it should have all the non-experiment dependent sections written to a draft level of understandability.
+% A typical research paper has six sections plus an abstract. Generically, the six sections are: Introduction, Related Work, Research Approach, Experiment and Results, Analysis, and Conclusions (note that Conclusions is plural). The abstract plus the first three and one-half sections should be written in your interim draft. Note that poorly written is fine at this point. This is simply an early draft. There may also be holes in this draft. For example, the Introduction section should give a 30,000 foot view of your approach to solving the problem plus the primary results and conclusions. You may not have all of this information after only one month of working on your research. This is OK.
+
+% AN EXAMPLE OF A SIGCOMM PAPER: http://www.sigcomm.org/sites/default/files/ccr/papers/2014/July/0000000-0000004.pdf
 
 \usepackage{natbib}
 \usepackage{graphicx}
@@ -12,109 +21,279 @@
 
 \maketitle
 
-\section{The Problem}
-%The ability to connect to the Internet without wires has given people a convenient, easy, and preferred way of communicating with others. The use of mobile phones and personal computers, all being connected to a wireless network has grown exponentially in the past 10 years. With the rise in popularity of mobile devices connecting wirelessly, the amount of network interference that each of these devices have with one another has also increased. Because devices, or nodes, communicate wirelessly, each node transmits a radio signal that is sent out to an Access Point (AP) rather than through a physical wire. Therefore, each node signal will experience the effects of interference, as other nodes are transmitting their signal at the same time to the same AP. As network traffic increases, these interferences cause connection lag and cause the experience to become less then optimal. The source of this problem is due to the type of Network Topology that the network chooses. Our goal is to find an optimal spanning tree that will minimize the maximum interference in a network given a total number of nodes, n, and a radius v, the distance from the center of the node to the closest neighbor. 
-Wireless networks rely on electromagnetic signals to share information among clients; this electromagnetic radiation can cause interference when multiple hosts attempt to send signals through the same airspace at the same time. In user-rich, high-bandwidth LANs, message collisions and electromagnetic interference can significantly impede network efficiency.
+\begin{abstract}
+Erik Got dis 
+\end{abstract}
 
-802.11 networks typically function by allowing network users to connect to one of many Access Points (AP) spatially distributed across the network. In order for each user on the network to connect to any AP, it must be close enough to that AP so that any signal it broadcasts arrives at the AP with enough strength to be interpreted by the AP. Generally, every individual host sends a signal directly to the AP. While this allows each host to easily connect to the AP, it also introduces considerable electromagnetic noise to other hosts on the network which, generally, are not interested in any host-AP communications but their own. As user count increases, electromagnetic noise density follows. Hosts which are physically distant from their assigned AP often cause substantial noise due to the strength of the signal they must broadcast to communicate with the AP. In LANs with numerous users distributed over a large geographic area, this can become a crippling inhibitor of wireless communication.
+\section{Introduction}
+Local Area Networks (LANs) which operate over a wireless medium using variants of the 802.11 protocol provide remarkable utility to users by allowing them to connect and disconnect from a network at any time without forming their own ad-hoc network to communicate with nearby users. To achieve such functionality, LANs typically operate by connecting each new user to a statically assigned physical access point (AP) which routes the user's traffic to the rest of the network. LANs often consist of tens or hundreds of users who share the wireless link among themselves using a variety of Media Access Control (MAC) algorithms and bandwidth distribution strategies such as Frequency Division Multiplexing (FDM) and Code Division Multiple Access (CDMA). While these approaches efficiently distribute network resources among nodes in a low or medium traffic density network, they deteriorate rapidly in high host/traffic density (user-rich) LANS. In all existing MAC algorithms, successful frame throughput declines significantly as host and traffic density increases on the network. Likewise, static multiplexing strategies such as FDMA and CDMA have performance issues in high-density wireless networks. 
 
+There is, however, a third viable approach to throughput optimization for user-rich LANs. Breaking down a large LAN into sub-LANs which operate within their own geographic region can significantly improve the per-host efficiency of the overall LAN. This is often done in practice using multiple physical APs within the geographic span of a LAN. However, this approach statically allocates network resources, which causes it to suffer the same fate as FDMA when uneven network activity distributions occur. A dynamic approach with multiple physical APs is not realistic, however, as it would require that APs physically move around the network in response to varying network activity. Therefore, our research explores an algorithmic approach to dynamic subnetwork generation in which the physical root AP dynamically assigns network users to act as subAPs which route traffic from nearby users to the AP. 
 
-% Problems with Network Interference and various topologies. \ Find a spanning tree that minimizes the maximum interference.
+In organizing a set of subnetworks, a number of considerations must be taken into account. If an algorithm is to be considered superior to the typical existing star topology, in which all hosts connect directly to a physical AP, it must outperform the star topology in most, if not all network viability metrics for a wide variety of possible network distributions. A typical LAN may be geographically organized in a normal or pseudo-random distribution, where hosts have no tendency to gravitate toward one another, or they may exist in a clustered distribution wherein hosts tend to group together. To entertain the idea of a clustered distribution, consider two scenarios. The first is a static clustering distribution, where users gravitate around a physical landmark within the geographic span of a LAN. An example of such a scenario would be an area of seats at a gate at an airport. A LAN operating in an airport is likely a user-rich LAN, and users tend to cluster together around seating areas which do not change over time. A second scenario is a dynamically clustered distribution, where the geographic location of a cluster is subject to change over time. An example would be a large conference room, wherein people move around in groups while each of their phones continuously talk to an AP. The two scenarios will be treated as one agglomerate 'clustered' distribution for the purposes of our research.
 
-% Third Person Passive Voice
-%Clear statement of the research problem.
-%Clear statement of your research methodology
-%A statement of previous work related to the problem
-%A statement of your research plan and schedule.
-%A list of resources needed to accomplish your work, with special emphasis on important pieces you don’t yet have access to.
-%Any other questions or clarifications you need from us.
+After exploring existing approaches to throughput optimization via multiplexing, MAC algorithms, and network topology optimization, we will define our model for assessing topology viability and explore the behaviour of a number of algorithms used to organize a hierarchical network topology.
 
+\textbf{Related Work}
+Cite and explain at least one paper about multiplexing strategies (e.g. FDM)
 
-\section{Methodology}
-In order to ameliorate the burden of network interference, a network topology will be designed which dynamically assigns hosts on the network to act as sub-APs which route traffic from nearby hosts to the root AP to prevent each host from individually broadcasting a signal to the root AP. The sub-AP will organize a geographically localized sub network which will collectively route network traffic through the sub-AP. The system will be designed and implemented in a virtualized physical space with a virtual network.
+Cite and explain at least one paper about a MAC algorithm (e.g. the Aloha paper)
 
-An efficient implementation of a dynamically organized hierarchical LAN network topology will require a number of functionalities on part of the AP, as well as each individual host on the network. An AP must be able to efficiently select sub-APs based on the proximity and network activity of a potential sub-AP, as well as the traffic density of the area around the potential sub-AP. In order for the system to function properly for a dynamic network (one which is perpetually gaining and losing nodes), an AP must be able to effectively assign a sub-AP to new hosts connecting to the network based on a new host's proximity to existing network nodes. Ideally, an AP will also be able to replace an existing sub-AP based on the performance of that sub-AP and its spatially proximate nodes, or when the sub-AP leaves the network. When a sub-AP leaves the network, it must also be able to communicate to each of its children nodes which node will become the new sub-AP. Each individual node on the network will need to be aware of spatially proximate hosts, and must also be aware of its localized sub-AP such that it can route communications through the correct host. Finally, should any sub-AP aggregate numerous children, it may be relevant to allow that sub-AP to recursively assign its own sub-APs to create a tiered hierarchy of APs and sub-APs on the network.
+Cite and explain at least one paper about a LAN topology algorithm. We'll implement this/these algorithm and compare it to our results. (e.g. Prim's algorithm)
 
-%Each sub-AP can recursively assign its own sub-APs to further minimize network interference. Whenever a new individual host accesses the network, it will contact the root AP which will instruct it which sub-AP to route traffic through \textbf{\textit{there must be a better way to do this. Maybe send queries to nearby nodes to ask which sub-AP to use? That would help reduce interference}}. When any sub-AP leaves the network, a client of the departing sub-AP (chosen by optimizing bandwith, latency, and total uptime) will be assigned to become the new sub-AP and its siblings will become its children. If at any point a host on the network fails to connect to the AP via its local sub-AP, it will work its way up the AP tree attempting to re-establish contact with the root AP. Each AP is responsible for allocating sub-APs. A virtualized network sandbox will be built and used to model the topology and the topology will be tested with varying algorithms (e.g. maximum number of child nodes allowed per sub-AP, sub-AP assignment protocol, and geographic clustering strategy) and in varying circumstances (e.g. variable building configurations and network traffic patterns).
+Cite AT LEAST 5 works.
 
 
 
-\section{Previous Work}
+\section{Topology Viability Model}
+In order to ascertain the viability of a LAN topology, our model considers a set of possible geographic host distributions ranging from randomized distributions to heavily clustered distributions, as well as a variety of average host densities per geographic area which have been discretized into three categories: low, medium, and high-density. While our focus lies in the performance of LAN topology algorithms in high-density (user-rich) LANs, a viable algorithm must also provide competitive functionality compared to other algorithms in low and medium-density host distributions.
 
-% A description of the paper about topology controls in wireless sensor networks
+Our model operates under a set of assumptions which streamline the process of assessing the viability of topology algorithms.
+\begin{itemize}
+    \item \textbf{Constant transmission rates:} All hosts send data across the network at a constant rate. In practice, this rate would be the average data transmission rate of a host.
+    \item \textbf{Single access point:} All hosts connect, either directly or indirectly, to a single root AP. Because each algorithm tested (excluding the null algorithm, the star topology) generates a hierarchical topology, it is assumed that each algorithm could be reasonably extended to a multi-AP system.
+    \item \textbf{Mutable NIC broadcast range:} All NICs can change the power/range with which they transmit a broadcast signal. The lack of this assumption precludes any significant interference minimization.
+    \item \textbf{Hosts within range of AP:} All hosts on the LAN are within range of the AP such that each host can broadcast a signal with sufficient strength to reach the AP and the AP, in turn, can broadcast a signal with sufficient strength to reach each host.
+\end{itemize}
 
-A lot of work has gone into designing a network topology for a Wireless Sensor Network, and the properties and problems of many proposed topologies. There is no fixed infrastructure in such networks; devices are mobile and routes can break \cite{tcpp}. Interference is a source of power consumption. Pedro Wightman and Miguel Labrador define main ways to reduce network topology: changing the transmission range, creating a hierarchy, and a hybrid of both. We will develop a hybrid method for topology control.
+Provided this set of assumptions, our model measures the viability of an algorithm for any given environment based on a number of topology performance metrics.
+\begin{itemize}
+    \item \textbf{Interfering node count:} The number of nodes whose broadcasts interfere with the communications of any given node. 
+    \item \textbf{Number of re-broadcasts:} The number of nodes through which the communications of any given node are routed before reaching the AP.
+    \item \textbf{Signal distance to AP:} The total distance over which signals from a host travel before eventually reaching the AP.
+    \item \textbf{Total network traffic:} The total amount of communication occurring over the network at any given time. Calculated as the sum of the transmission rate of each node multiplied by the number of re-broadcasts that must occur to connect a host to the AP.
+\end{itemize}
 
-%For all of these, make sure that the descriptions explain how the research pertains to our topic.
+Each of these metrics will be calculated for each proposed algorithm in many possible host layout scenarios.
 
-%A description of the paper about the weight-label method -- I maybe able to write about it as a way we can apply to our problem but it's CPM, so about project networks.
-%\cite{weightLabelMethod} 
+As a basis for comparison of topology algorithms, a star topology algorithm will be used as a null algorithm. In a star topology, each host on the network connects directly to the AP. For each topology algorithm tested, the algorithm will be used to generate a topology for 50 networks from each possible combination of semi-clustered, very-clustered, and unclustered (random) host distributions with low, medium, and high host densities.
 
-%A description of the Ph.D thesis about optimal routing for ad-hoc networks. Idris Skloul Ibrahim 
-
-Other research has been conducted to address the mobility of nodes in wireless networks and other constraints (e.g. "bandwidth, radio propagation, energy supply, etc") \cite{phdthesis1}. Idress Skloul Ibrahim  worked on a "Optimum Route Algorithm" to find the shortest route based on hops between the source and destination, by creating tables to keep track of different routes and states for each node in the network. When a new node enters a network, it will determine and store optimal as well as sub-optimal paths to the one-or-two-hops neighbors. While we plan on implementing a different way to determine routes, the constraints of nodes detailed are still relevant in our project.
-
-%A description of the paper on dynamic MAN topologies 
-
-Research into the field of dynamic network topology has been performed by Hwee Xian Tan and Winston Seah \cite{dynamictopology}. Their findings showed that a higher number of nodes can mean more connectivity between nodes in a network, but that can also mean more collision and interference. The transmission range of nodes are reduced to the minimum required to maintain connectivity with neighboring nodes that are part of the active route. This reduces interference with neighboring pairs, and reducing transmission range pertains heavily to our research.
-
-% A description of the paper about 802.11 AP selection hmm are we doing AP selection? Don't think this relevant unless we look at multiple APs. I'll cite this as something we can use for that
-
-Most works listed so far deal with nodes in a network. Vasudevan et al. considered the problem of wireless clients determining which APs to connect to. They account for the load at each AP as well as the current way in which these connections are formed: wireless devices connect to the strongest signal strength from the APs in its neighborhood. However, their experiments are conducted in a noise-free environment \cite{apselection}. 
-
-% A description of the research paper on dynamic wireless topologies DMAC
-
-One important thing to consider when designing dynamic wireless topologies is the power of the signals sent out by sub-AP's to a main AP. Because we are sending the data of all nodes in a section through one sub-AP node the power will be greater, causing greater interference. One possible solution was laid out by Stefano Basagni, Alessio Carosi, and Chiara Petrioli, by using "an energy-conserving sleep mode" \cite{DMAC}.  This methodology could greatly decrease the interference if implemented in the proper way and will be considered in our research. 
+Figure 1 shows the format in which topology viability data will be presented. The 'Layout' column refers to the geographic distribution of hosts in the form $Layout:Density$, where $layout$ is $R$ for random, $SC$ for semi-clustered and $C$ for clustered, and $density$ describes the geographic host density as $L$ for low, $M$ for medium, and $H$ for high-density. The interference, hops, distance, and traffic columns refer to the four performance metrics described above (interfering node count, number of rebroadcasts, signal distance to AP, and total network traffic, respectively).
 
 
-
-\section{Plan and Schedule}
-%We plan to have the initial draft completed before March 1st. This is to assure that we have plenty of time to fix any potential issues that may arise. From this point, we plan to have the final draft done by April 1st. The final project is due April 7th, but we plan to use the extra days to test our system.  Finally, the semester report will be complete by May 1st and turned in the following day.
-
-%Look into protocols needed to route through other computers to the router. Determine how to choose which hosts to be sub-APs. (max heap) Figure out gaining access and determining which sub-AP a new user would connect to. Consider security issues.
-
-
-The design and implementation of a hierarchical interference - minimizing network topology has been split up into 5 sprints, each of which is assigned a delivery date. 
-
-\begin{enumerate}
-    
-    \item The first milestone in a hierarchical network topology is implementing a system in which the root AP can select ideal sub-APs based on basic information about each host on the network, such as a latency, average network activity, and total uninterrupted time spent on network. 
-    
-    \textit{Delivery Date: 2/11/2016}
-
-    \item Once a root AP can efficiently assign sub-APs based on a static network, it must be able to assign new hosts on a network to a sub-AP based on the new node's proximity to existing sub-APs and the current traffic density of the nearby sub-APs. 
-    
-    \textit{Delivery Date: 2/18/2016}
-
-    \item Once the hierarchical network topology has been established, it should be able to reorganize itself to minimize interference when new nodes are introduced into the network. 
-    
-    \textit{Delivery Date: 2/25/2016}
-
-    \item Once the hierarchical network can dynamically adapt to incoming nodes, it must be able to elect a new sub-AP should an existing sub-AP leave the network, and it must inform the sub-APs children of which host has become the new sub-AP.
-    
-    \textit{Delivery Date: 3/3/2016}
-
-    \item Should the hierarchical network function for a two-tiered system, the system should be recursively expanded to allow sub-APs to assign their own sub-APs to generate a multi-tier AP hierarchy.
-    
-    \textit{Delivery Date: 3/18/2016}
-\end{enumerate}
-
-Should each of the sprints be delivered on schedule, remaining research time will be spent optimizing existing infrastructure and testing it in a virtualized network environment.
+\begin{figure}[H]
+  \centering
+  
+    \begin{tabular}{|l || c | c | c | c|}
+    \hline
+    Layout & Interference & Hops & Distance & Traffic \\
+    \hline
+    R:L & $8.93 \pm 4.39$ & $0 \pm 0$ & $272 \pm 117$ & $168$ \\
+    R:M & $29.6 \pm 11.3$ & $0 \pm 0$ & $307 \pm 115$ & $508$ \\
+    R:H & $72.4 \pm 27.2$ & $0 \pm 0$ & $307 \pm 118$ & $1208$ \\
+    \hline
+    SC:L & $16.3 \pm 5.32$ & $0 \pm 0$ & $240 \pm 126$ & $142$ \\
+    SC:M & $32.4 \pm 11.7$ & $0 \pm 0$ & $315 \pm 102$ & $450$ \\
+    SC:H & $74.9 \pm 27.8$ & $0 \pm 0$ & $287 \pm 103$ & $1280$ \\
+    \hline
+    C:L & $17.7 \pm 5.69$ & $0 \pm 0$ & $307 \pm 140$ & $127$ \\
+    C:M & $40.7 \pm 15.9$ & $0 \pm 0$ & $289 \pm 101$ & $528$ \\
+    C:H & $71.2 \pm 30.9$ & $0 \pm 0$ & $346 \pm 144$ & $1252$ \\
+    \hline
+    \end{tabular}
+  
+  \caption{Viability metrics for the null algorithm}
+\end{figure}
 
 
-\section{Resources Needed}
-The proposed network topology will be designed and implemented in a strictly virtualized environment, such that the required resources are limited to access to computers. All work will be done on researchers' private computers and the SMU Lyle General Use servers. Therefore, no external resources will be required to complete the research.
 
+\section{Proximity Greedy Algorithm}
+Our first approach to generating an ideal network topology is to prioritize nodes geographically proximate to the AP to become sub-APs. To do so, a greedy algorithm was implemented which assigns the most proximate unassigned host to become a sub-AP, and assigns the n nodes closest to the new sub-AP to be its children, where n is a load factor calculated as the total number of hosts on the network divided by the desired number of sub-APs. This approach attempts an even distribution of re-transmission loads among the hosts assigned to be sub-APs.
+
+\subsection{Proximity Greedy Algorithm}
+The most basic approach to topology optimization is with an un-optimized, single-iteration of the proximity greedy algorithm. This basic proximity algorithm, when tested against a set of geographic host layouts generated according to the specifications layed out in the previous section, generated network topologies whose relevant metrics are shown in figure 2.
+
+\begin{figure}[H]
+  \centering
+  
+    \begin{tabular}{|l || c | c | c | c|}
+    \hline
+    Layout & Interference & Hops & Distance & Traffic \\
+    \hline
+    R:L & $4.73 \pm 3.27$ & $0.76 \pm 0.42$ & $381 \pm 112$ & $238$ \\
+    R:M & $9.34 \pm 9.34$ & $0.81 \pm 0.39$ & $350 \pm 149$ & $893$ \\
+    R:H & $15.9 \pm 22.2$ & $0.86 \pm 0.35$ & $332 \pm 128$ & $2300$ \\
+    \hline
+    SC:L & $6.11 \pm 4.77$ & $0.77 \pm 0.42$ & $316 \pm 166$ & $281$ \\
+    SC:M & $10.9 \pm 10.9$ & $0.82 \pm 0.38$ & $361 \pm 150$ & $879$ \\
+    SC:H & $19.1 \pm 27.8$ & $0.87 \pm 0.34$ & $334 \pm 122$ & $2548$ \\
+    \hline
+    C:L & $6.20 \pm 4.55$ & $0.80 \pm 0.40$ & $269 \pm 138$ & $294$ \\
+    C:M & $10.7 \pm 10.8$ & $0.86 \pm 0.35$ & $244 \pm 100$ & $869$ \\
+    C:H & $20.7 \pm 28.4$ & $0.86 \pm 0.35$ & $326 \pm 114$ & $2248$ \\
+    \hline
+    \end{tabular}
+  
+  \caption{Viability metrics for the basic proximity-greedy algorithm}
+\end{figure}
+
+
+\subsection{Post-Configuration Optimization}
+Post-network configuration, the greedy algorithm can be optimized by having each non-subAP host switch to a new subAP if it is closer to a subAP other than its own. This slightly deteriorates the even distribution of traffic routed through each subAP which exists in the basic proximity greedy algorithm. Results for the optimized version of the proximity algorithm are shown in figure 3, and pseudocode for the optimized algorithm is shown below.
+
+\begin{algorithm}[H]
+\caption{Optimized Proximity Greedy Algorithm}
+\begin{algorithmic}[H]
+\Require{$hosts$ is a list of all hosts on the network, $subAPs$ is an empty list of subAPs, and $rootAP$ is the physical AP of the network}
+\Procedure{buildNetwork}{$hosts, subAPs, rootAP$}
+\State sort hosts by distance to rootAP
+\For{$i \gets 1 \textrm{ to } k$}
+\State $subAPs[i]\gets host[i]$
+\EndFor
+\For{$i \gets k \textrm{ to } numHosts$}
+\State sort $subAPs$ by distance to $host[i]$
+\State $host[i].myAP \gets subAPs[0]$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[H]
+  \centering
+  
+    \begin{tabular}{|l || c | c | c | c|}
+    \hline
+    Layout & Interference & Hops & Distance & Traffic \\
+    \hline
+    R:L & $4.1 \pm 3.10$ & $0.67 \pm 0.47$ & $330 \pm 117$ & $266$ \\
+    R:M & $7.61 \pm 9.29$ & $0.82 \pm 0.38$ & $335 \pm 134$ & $997$ \\
+    R:H & $13.2 \pm 24.4$ & $0.86 \pm 0.35$ & $337 \pm 117$ & $2309$ \\
+    \hline
+    SC:L & $6.03 \pm 4.96$ & $0.80 \pm 0.40$ & $312 \pm 91$ & $280$ \\
+    SC:M & $7.73 \pm 10.7$ & $0.83 \pm 0.38$ & $327 \pm 156$ & $937$ \\
+    SC:H & $15.0 \pm 29.4$ & $0.86 \pm 0.34$ & $339 \pm 123$ & $2193$ \\
+    \hline
+    C:L & $7.23 \pm 7.65$ & $0.80 \pm 0.40$ & $307 \pm 121$ & $282$ \\
+    C:M & $9.76 \pm 14.7$ & $0.84 \pm 0.37$ & $309 \pm 131$ & $999$ \\
+    C:H & $13.5 \pm 25.4$ & $0.86 \pm 0.35$ & $243 \pm 116$ & $2302$ \\
+    \hline
+    \end{tabular}
+  
+  \caption{Viability metrics for the optimized proximity-greedy algorithm}
+\end{figure}
+
+
+Figure 4 shows a comparison of the two algorithms for a randomly distributed data set. The grayed-out area represents geographic regions where interference is occurring. Darker shades of gray indicate greater interference.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.45\linewidth}
+\includegraphics[scale=0.15]{UnOpt.png}
+\caption{Un-Optimized}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.45\linewidth}
+\includegraphics[scale=0.15]{opt.png}
+\caption{Optimized}
+\end{subfigure}
+\caption{Optimized vs Un-optimized}
+\end{figure}
+
+\section{Recursive Proximity Greedy Algorithm}
+As an expansion of the basic proximity greedy algorithm, two recursive versions exist which, after assigning sub-APs, allow each sub-AP to use the same proximity greedy algorithm used by the AP to assign their own sub-subAPs. Both a semi-recursive version, which restricts the network to generating a limited number of layers to the AP hierarchy, and a fully recursive version, which generates a tree of sub-APs until it reaches edge nodes on the LAN, are implemented.
+
+\subsection{Semi-Recursive Proximity Greedy Algorithm}
+In a semi-recursive approach, the proximity greedy algorithm recurses up to $k$ times to define subnetworks, sub-subnetworks, and so on. $k$ is calculated as a function of the total number of nodes on the network, such that the algorithm will recurse with depth relative to the density of the network. A viable, but less robust solution would be to simply recurse n times where n is some constant hard-coded in the algorithm. This approach, however, fails to properly scale to total number of hosts on the network. Viability metrics for the network topologies generated by this algorithm in our test environment are shown in figure 4.1.
+
+FIGURE 4.1 -- TABLE OF STATS FOR SEMI RECURSIVE (NOT YET IMPLEMENTED ALGORITHM)
+
+\subsection{Fully-Recursive Proximity Greedy Algorithm}
+In a fully-recursive greedy approach, the proximity algorithm recurses indefinitely until it reaches edge nodes on each branch of recursion. This approach attempts to minimize total interference, not taking into account additional overhead introduced by having numerous rebroadcasts. The relevant metrics for a recursive topology algorithm are shown in figure 4.2, and pseudocode for the fully recursive algorithm is included below.
+
+FIGURE 4.2 -- TABLE OF STATS FOR FULLY RECURSIVE (ERIK ALGORITHM)
+
+\begin{algorithm}[H]
+\caption{Recursive Proximity Greedy Algorithm}
+\begin{algorithmic}[H]
+\Require{$hosts$ is a list of all hosts on the network, $subAPs$ is an empty list of subAPs, and $rootAP$ is the physical AP of the network}
+\Procedure{buildNetwork}{$hosts, subAPs, rootAP$}
+\If{$length(hosts) <= 1$}
+\State return
+\EndIf
+\State sort hosts by distance to rootAP
+\For{$i \gets 1 \textrm{ to } k$}
+\State $subAPs[i]\gets hosts[i]$
+\EndFor
+\For{$i \gets k \textrm{ to } numHosts$}
+\State sort $subAPs$ by distance to $hosts[i]$
+\State $hosts[i].myAP \gets subAPs[0]$
+\State $subAPs[0].myChildren.append(hosts[i])$
+\EndFor
+\For{$subAP$ in $subAPs$}
+\State buildNetwork($subAP.myChildren$, $[]$, $subAP$)
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Figure N shows a topology generated by a fully-recursive distance greedy algorithm. The resulting network has very low interference, but a high number of re-broadcasts must occur to transfer information from edge nodes to the AP.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.15]{erikFullyRecursive.png}
+\caption{Optimized vs Un-optimized}
+\end{figure}
+
+\section{Centralization Greedy Algorithm}
+In order to optimize for areas of high host density which are isolate from the location of the AP, a greedy algorithm is implemented which selects sub-APs based on hosts' centralization relative to all other hosts on the network, where centralization is defined as the average distance to each other host on the network from any given node. This is implemented as a single-tier hierarchy as well as a recursive multi-tier hierarchy.
+
+\subsection{Single-Tier Centralization}
+In a single-tier centralization approach, a single iteration of the centralization greedy algorithm assigns $k$ sub-APs based on highest overall proximity where $k$ is a function of the total number of hosts on the network. Figure 5.1 shows topology viability metrics for an implementation of this single-tier centralization greedy algorithm.
+
+FIGURE 5.1 -- TABLE OF STATS FOR IAN ALGORITHM
+
+\subsection{Multi-Tier Centralization}
+In a multi-tier centralization approach, the centralization greedy algorithm recurses up to $\log_2 k$, where $k$ is a function of the total number of hosts on the network, and on layer n of recursion, the algorithm assigns $\frac{k}{2^n}$ subAPs, where $n = 0$ at the first layer of recursion. Results from the multi-tier centralization algorithm can be found in figure 5.2, and pseudocode for the algorithm is shown below.
+
+FIGURE 5.2 -- TABLE OF STATS FOR RECURSIVE IAN ALGORITHM
+
+\begin{algorithm}[H]
+\caption{Recursive Centralization Greedy Algorithm}
+\begin{algorithmic}[H]
+\Require{$hosts$ is a list of all hosts on the network, $subAPs$ is an empty list of subAPs}
+\Procedure{buildNetwork}{$hosts, subAPs$}
+\State sort hosts by centralization
+\For{$i \gets 1 \textrm{ to } k$}
+\State $subAPs[i]\gets host[i]$
+\EndFor
+\For{$i \gets k \textrm{ to } numHosts$}
+\State sort $subAPs$ by distance to $host[i]$
+\State $host[i].myAP \gets subAPs[0]$
+\State $subAPs[0].myChildren.append(hosts[i])$
+\EndFor
+\For{$subAP$ in $subAPs$}
+\State buildNetwork($subAP.myChildren$, $[]$)
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+Figure N shows a comparison of the two algorithms for a randomly distributed data set. While the single-tier centralization reduces interference mostly around the physical AP, the recursive version optimizes overall interference.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.45\linewidth}
+\includegraphics[scale=0.15]{ianNotRecursive.png}
+\caption{Un-Optimized}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.45\linewidth}
+\includegraphics[scale=0.15]{ianRecursive.png}
+\caption{Optimized}
+\end{subfigure}
+\caption{Single vs Multi-tier centralization}
+\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{references}
 
-
-
 %For previous work:
-%https://www.usenix.org/legacy/event/imc05/tech/full_papers/vasudevan/vasudevan.pdf
+%http://www.ijser.org/researchpaper%5CA-REVIEW-PAPER-ON-ORTHOGONAL-FREQUENCY-DIVISION.pdf
+%http://www.ece.umn.edu/~nihar/papers/ICC-paper-Mariam.pdf
+%http://users.ece.utexas.edu/~gerstl/publications/iess13.prims.pdf
 %http://www.macs.hw.ac.uk/~isi3/Phd_Proposal_files/Phd_draftproposal%5b3%5d.pdf
-%http://www.ajol.info/index.php/orion/article/download/34270/6279
-%http://www.icmu.org/icmu2005/Papers/117039-1-050226201619.pdf
+%Tentative on below essay
+%http://www.isprs.org/proceedings/XXXVIII/7-C4/313_GSEM2009.pdf
 
 \end{document}

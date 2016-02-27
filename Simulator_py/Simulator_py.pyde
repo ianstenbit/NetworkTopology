@@ -160,14 +160,14 @@ def randomlyGenerateHosts(num):
         hosts.append(buildDefaultHostAtXY(random(SCREEN_WIDTH), random(SCREEN_HEIGHT), random(10)))
     return hosts
 
-def randomlyGenerateHostsInGroups(numGroups, maxHostsPerGroup, spread):
+def randomlyGenerateHostsInGroups(numGroups, hostsPerGroup, spread):
     hosts = []
     
     for i in range(numGroups):
         x = random(SCREEN_WIDTH)
         y = random(SCREEN_HEIGHT)
-        for j in range(int(random(maxHostsPerGroup-1) + 1)):
-            hosts.append(buildDefaultHostAtXY(x + random(spread) - spread/2, y + random(spread) - spread/2, random(50)))
+        for j in range(hostsPerGroup):
+            hosts.append(buildDefaultHostAtXY(x + random(spread) - spread/2, y + random(spread) - spread/2, random(10)))
     
     return hosts
    
@@ -499,34 +499,34 @@ for i in range(total_number_algorithms):
     
     write += "\n Weakly Clustered:\n"
     write += "Low Density: \n"
-    hosts = randomlyGenerateHostsInGroups(3, 100, 30)
+    hosts = randomlyGenerateHostsInGroups(3, 10, 100)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
     write += "Medium Density: \n"
-    hosts = randomlyGenerateHostsInGroups(10, 100, 100)
+    hosts = randomlyGenerateHostsInGroups(10, 10, 100)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
     write += "High Density: \n"
-    hosts = randomlyGenerateHostsInGroups(25, 100, 250)
+    hosts = randomlyGenerateHostsInGroups(25, 10, 100)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
     
     write += "\n Strongly Clustered:\n"
     write += "Low Density: \n"
-    hosts = randomlyGenerateHostsInGroups(3, 35, 30)
+    hosts = randomlyGenerateHostsInGroups(3, 10, 35)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
     write += "Medium Density: \n"
-    hosts = randomlyGenerateHostsInGroups(10, 35, 100)
+    hosts = randomlyGenerateHostsInGroups(10, 10, 35)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
     write += "High Density: \n"
-    hosts = randomlyGenerateHostsInGroups(25, 35, 250)
+    hosts = randomlyGenerateHostsInGroups(25, 10, 35)
     refreshTopology()
     write += str(getInterferenceStats())
     write += "\n"
