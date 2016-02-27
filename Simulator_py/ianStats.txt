@@ -1,0 +1,92 @@
+Algorithm: 0
+ Random:
+Low Density: 
+{'sd_hops': 0.3726779962499649, 'distance': 343.36875915527344, 'totalTraffic': 278.13276636600494, 'sd_dist': 136.4299753267863, 'nodes': 30, 'hops': 0.8333333333333334, 'interference': 5.266666666666667, 'sd_interference': 2.462158041682585}
+Medium Density: 
+{'sd_hops': 0.21794494717703372, 'distance': 331.9832134628296, 'totalTraffic': 1066.4458901882172, 'sd_dist': 106.39036533284464, 'nodes': 100, 'hops': 0.95, 'interference': 20.16, 'sd_interference': 8.540163932852812}
+High Density: 
+{'sd_hops': 0.13999999999999985, 'distance': 310.2939821624756, 'totalTraffic': 2502.1501148939133, 'sd_dist': 110.25241096243307, 'nodes': 250, 'hops': 0.98, 'interference': 61.22, 'sd_interference': 26.49519956520426}
+
+ Weakly Clustered:
+Low Density: 
+{'sd_hops': 0.3726779962499649, 'distance': 261.59492936134336, 'totalTraffic': 270.61841905117035, 'sd_dist': 79.85891418917751, 'nodes': 30, 'hops': 0.8333333333333334, 'interference': 9.7, 'sd_interference': 3.4559128075420724}
+Medium Density: 
+{'sd_hops': 0.21794494717703422, 'distance': 389.15357934474946, 'totalTraffic': 986.8178157806396, 'sd_dist': 118.11608734366571, 'nodes': 100, 'hops': 0.95, 'interference': 23.63, 'sd_interference': 7.575823387592931}
+High Density: 
+{'sd_hops': 0.13999999999999999, 'distance': 344.74914558792113, 'totalTraffic': 2434.2488391399384, 'sd_dist': 128.0808066753647, 'nodes': 250, 'hops': 0.98, 'interference': 64.628, 'sd_interference': 25.503129533451364}
+
+ Strongly Clustered:
+Low Density: 
+{'sd_hops': 0.3726779962499649, 'distance': 357.0394518057505, 'totalTraffic': 248.22990131378174, 'sd_dist': 135.94083779674799, 'nodes': 30, 'hops': 0.8333333333333334, 'interference': 8.933333333333334, 'sd_interference': 5.801915392542554}
+Medium Density: 
+{'sd_hops': 0.21794494717703397, 'distance': 319.33012033462524, 'totalTraffic': 991.7770690917969, 'sd_dist': 124.51497489181459, 'nodes': 100, 'hops': 0.95, 'interference': 27.68, 'sd_interference': 10.995344469365204}
+High Density: 
+{'sd_hops': 0.13999999999999987, 'distance': 347.07885610580445, 'totalTraffic': 2487.651008248329, 'sd_dist': 119.17956746226825, 'nodes': 250, 'hops': 0.98, 'interference': 70.656, 'sd_interference': 25.260753432944142}
+Algorithm: 1
+ Random:
+Low Density: 
+{'sd_hops': 0.0, 'distance': 245.80915508270263, 'totalTraffic': 141.05135703086853, 'sd_dist': 124.12021051910322, 'nodes': 30, 'hops': 0.0, 'interference': 9.066666666666666, 'sd_interference': 4.07376429798725}
+Medium Density: 
+{'sd_hops': 0.0, 'distance': 316.3301723480225, 'totalTraffic': 541.1674047708511, 'sd_dist': 114.7469122369751, 'nodes': 100, 'hops': 0.0, 'interference': 29.17, 'sd_interference': 10.526210144206699}
+High Density: 
+{'sd_hops': 0.0, 'distance': 316.9151452941895, 'totalTraffic': 1265.043392777443, 'sd_dist': 113.66101387077029, 'nodes': 250, 'hops': 0.0, 'interference': 72.384, 'sd_interference': 25.81744650425368}
+
+ Weakly Clustered:
+Low Density: 
+{'sd_hops': 0.0, 'distance': 292.2053944905599, 'totalTraffic': 175.15157318115234, 'sd_dist': 72.75230771194, 'nodes': 30, 'hops': 0.0, 'interference': 11.2, 'sd_interference': 1.98997487421324}
+Medium Density: 
+{'sd_hops': 0.0, 'distance': 254.078053855896, 'totalTraffic': 507.572606921196, 'sd_dist': 127.94615708666231, 'nodes': 100, 'hops': 0.0, 'interference': 45.11, 'sd_interference': 21.12197670673841}
+High Density: 
+{'sd_hops': 0.0, 'distance': 314.16645895385744, 'totalTraffic': 1256.4722204208374, 'sd_dist': 100.94917137665773, 'nodes': 250, 'hops': 0.0, 'interference': 79.488, 'sd_interference': 28.40510264019475}
+
+ Strongly Clustered:
+Low Density: 
+{'sd_hops': 0.0, 'distance': 302.4558634440104, 'totalTraffic': 131.05800068378448, 'sd_dist': 96.9100930974394, 'nodes': 30, 'hops': 0.0, 'interference': 13.333333333333334, 'sd_interference': 4.714045207910316}
+Medium Density: 
+{'sd_hops': 0.0, 'distance': 304.2502713775635, 'totalTraffic': 485.65743350982666, 'sd_dist': 115.05025629605386, 'nodes': 100, 'hops': 0.0, 'interference': 31.05, 'sd_interference': 10.419572927908328}
+High Density: 
+{'sd_hops': 0.0, 'distance': 300.8168346862793, 'totalTraffic': 1265.335123538971, 'sd_dist': 114.61178074777057, 'nodes': 250, 'hops': 0.0, 'interference': 81.296, 'sd_interference': 37.93426398389721}
+Algorithm: 2
+ Random:
+Low Density: 
+{'sd_hops': 0.4714045207910315, 'distance': 394.05447578430176, 'totalTraffic': 238.4889268875122, 'sd_dist': 135.904539422328, 'nodes': 30, 'hops': 0.6666666666666666, 'interference': 4.7, 'sd_interference': 3.707200201409864}
+Medium Density: 
+{'sd_hops': 0.39230090491866026, 'distance': 341.8710145378113, 'totalTraffic': 913.1512197256088, 'sd_dist': 146.34118873816138, 'nodes': 100, 'hops': 0.81, 'interference': 9.08, 'sd_interference': 9.137483242118696}
+High Density: 
+{'sd_hops': 0.35509998591945824, 'distance': 336.43270915603637, 'totalTraffic': 2330.418941617012, 'sd_dist': 146.19094960828448, 'nodes': 250, 'hops': 0.852, 'interference': 17.504, 'sd_interference': 23.640854130085906}
+
+ Weakly Clustered:
+Low Density: 
+{'sd_hops': 0.3726779962499649, 'distance': 272.6134679158529, 'totalTraffic': 243.07504451274872, 'sd_dist': 144.34237736814305, 'nodes': 30, 'hops': 0.8333333333333334, 'interference': 8.566666666666666, 'sd_interference': 5.129544055978291}
+Medium Density: 
+{'sd_hops': 0.3469870314579495, 'distance': 350.35165575504305, 'totalTraffic': 1004.1638532876968, 'sd_dist': 99.083988143385, 'nodes': 100, 'hops': 0.86, 'interference': 12.79, 'sd_interference': 12.845462233800701}
+High Density: 
+{'sd_hops': 0.34698703145794985, 'distance': 374.0778464202881, 'totalTraffic': 2270.073354959488, 'sd_dist': 130.4188236686058, 'nodes': 250, 'hops': 0.86, 'interference': 19.112, 'sd_interference': 25.01414511831256}
+
+ Strongly Clustered:
+Low Density: 
+{'sd_hops': 0.4000000000000001, 'distance': 427.2700843334198, 'totalTraffic': 258.7926164865494, 'sd_dist': 44.463620346275576, 'nodes': 30, 'hops': 0.8, 'interference': 5.8, 'sd_interference': 3.145366963222786}
+Medium Density: 
+{'sd_hops': 0.3469870314579497, 'distance': 356.124095710516, 'totalTraffic': 950.4204210042953, 'sd_dist': 120.21271215888538, 'nodes': 100, 'hops': 0.86, 'interference': 11.78, 'sd_interference': 11.853758897497448}
+High Density: 
+{'sd_hops': 0.33849076796863936, 'distance': 337.65494495010375, 'totalTraffic': 2325.220050215721, 'sd_dist': 143.3063508460178, 'nodes': 250, 'hops': 0.868, 'interference': 17.956, 'sd_interference': 25.170658791537416}
+Algorithm: 3
+ Random:
+Low Density: 
+{'sd_hops': 0.4582575694955839, 'distance': 340.6785622914632, 'totalTraffic': 274.04829931259155, 'sd_dist': 176.01525540154543, 'nodes': 30, 'hops': 0.7, 'interference': 4.1, 'sd_interference': 2.9137604568666924}
+Medium Density: 
+{'sd_hops': 0.39230090491866026, 'distance': 334.17617018699644, 'totalTraffic': 960.6718506813049, 'sd_dist': 135.90643645438337, 'nodes': 100, 'hops': 0.81, 'interference': 7.75, 'sd_interference': 10.025342886904168}
+High Density: 
+{'sd_hops': 0.35902089075707005, 'distance': 345.1739709892273, 'totalTraffic': 2365.1357474327087, 'sd_dist': 126.91121723340154, 'nodes': 250, 'hops': 0.848, 'interference': 12.82, 'sd_interference': 23.625486238382493}
+
+ Weakly Clustered:
+Low Density: 
+{'sd_hops': 0.47140452079103146, 'distance': 214.13717104593914, 'totalTraffic': 248.95742559432983, 'sd_dist': 130.39021267162306, 'nodes': 30, 'hops': 0.6666666666666666, 'interference': 8.0, 'sd_interference': 7.941452428030194}
+Medium Density: 
+{'sd_hops': 0.357071421427143, 'distance': 297.49192912340163, 'totalTraffic': 962.2376066446304, 'sd_dist': 124.23708045645414, 'nodes': 100, 'hops': 0.85, 'interference': 7.22, 'sd_interference': 9.606851721557899}
+High Density: 
+{'sd_hops': 0.3469870314579499, 'distance': 319.76772679138185, 'totalTraffic': 2369.948063135147, 'sd_dist': 134.76952437942333, 'nodes': 250, 'hops': 0.86, 'interference': 13.952, 'sd_interference': 23.58520078354221}
+
+ Strongly Clustered:
+Low Density: 
+{'sd_hops': 0.3726779962499649, 'distance': 381.28676900068916, 'totalTraffic': 281.33728981018066, 'sd_dist': 97.77595379566671, 'nodes': 30, 'hops': 0.8333333333333334, 'interference': 6.733333333333
