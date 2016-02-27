@@ -148,7 +148,7 @@ def refreshTopology():
         setHostAPsErikAlgorithm()
         print("Erik's Algorithm: Distance Greedy")
     elif abs(current_algorithm % total_number_algorithms) == 6:
-        setHostAPsIanAlgorithmRecursive()
+        setHostAPsIanAlgorithmRecursive(5, hosts, AP)
         print("Ian's Algorithm: Recursive")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
@@ -455,22 +455,22 @@ def keyPressed():
 #The AP is going to be centered by default, but this should be changeable (not all networks have centered AP)         
 AP = buildDefaultHostAtXY(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0)
         
-#hosts = randomlyGenerateHosts(num_hosts)
+hosts = randomlyGenerateHosts(num_hosts)
 
-#refreshTopology()
+refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
 #get statistics and write out to csv
-with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
-    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    for numHost in range(50, 500, 50):  
-        hosts = randomlyGenerateHosts(numHost)
-        show_stats=True
-        for alg in range(1, total_number_algorithms+1):
-            current_algorithm = alg
-            refreshTopology()
-            stats = (getInterferenceStats())
-            stats['algorithm'] = current_algorithm
-            writer.writerow(stats)
+#with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
+#    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic']
+#    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+#    writer.writeheader()
+#    for numHost in range(50, 500, 50):  
+#        hosts = randomlyGenerateHosts(numHost)
+#        show_stats=True
+#        for alg in range(1, total_number_algorithms+1):
+#            current_algorithm = alg
+#            refreshTopology()
+#            stats = (getInterferenceStats())
+#            stats['algorithm'] = current_algorithm
+#            writer.writerow(stats)
