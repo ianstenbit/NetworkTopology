@@ -5,7 +5,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 100
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 7
+total_number_algorithms = 6
 current_randomization_pattern = 1
 
 
@@ -142,12 +142,9 @@ def refreshTopology():
         setHostAPsTravisAlgorithmExtended()
         print("Travis' Algorithm Extended")
     elif abs(current_algorithm % total_number_algorithms) == 4:
-        setHostAPsErikAlgorithm2()
-        print("Erik's Algorithm: Bandwidth/Distance Greedy")
-    elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsErikAlgorithm()
         print("Erik's Algorithm: Distance Greedy")
-    elif abs(current_algorithm % total_number_algorithms) == 6:
+    elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsIanAlgorithmRecursive(5, hosts, AP)
         print("Ian's Algorithm: Recursive")
     else:
@@ -474,3 +471,67 @@ refreshTopology()
 #            stats = (getInterferenceStats())
 #            stats['algorithm'] = current_algorithm
 #            writer.writerow(stats)
+
+print("Before Loop")
+
+file = open("ianStats.txt", 'w')
+for i in range(total_number_algorithms):
+    print("Algorithm")
+    current_algorithm = i
+    write = "Algorithm: "
+    write += str(i)
+    write += "\n Random:\n"
+    write += "Low Density: \n"
+    hosts = randomlyGenerateHosts(30)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "Medium Density: \n"
+    hosts = randomlyGenerateHosts(100)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "High Density: \n"
+    hosts = randomlyGenerateHosts(250)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    
+    write += "\n Weakly Clustered:\n"
+    write += "Low Density: \n"
+    hosts = randomlyGenerateHostsInGroups(3, 100, 30)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "Medium Density: \n"
+    hosts = randomlyGenerateHostsInGroups(10, 100, 100)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "High Density: \n"
+    hosts = randomlyGenerateHostsInGroups(25, 100, 250)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    
+    write += "\n Strongly Clustered:\n"
+    write += "Low Density: \n"
+    hosts = randomlyGenerateHostsInGroups(3, 35, 30)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "Medium Density: \n"
+    hosts = randomlyGenerateHostsInGroups(10, 35, 100)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    write += "High Density: \n"
+    hosts = randomlyGenerateHostsInGroups(25, 35, 250)
+    refreshTopology()
+    write += str(getInterferenceStats())
+    write += "\n"
+    
+    file.write(write)
+    
+    
+    
