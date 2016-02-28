@@ -5,7 +5,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 100
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 6
+total_number_algorithms = 7
 current_randomization_pattern = 1
 
 
@@ -144,9 +144,15 @@ def refreshTopology():
     elif abs(current_algorithm % total_number_algorithms) == 4:
         setHostAPsErikAlgorithm()
         print("Erik's Algorithm: Distance Greedy")
+    # elif abs(current_algorithm % total_number_algorithms) == 5:
+    #     setHostAPsErikAlgorithm3()
+    #     print("Erik's Algorithm 3: Distance Greedy")
     elif abs(current_algorithm % total_number_algorithms) == 5:
         setHostAPsIanAlgorithmRecursive(5, hosts, AP)
         print("Ian's Algorithm: Recursive")
+    elif abs(current_algorithm % total_number_algorithms) == 6:
+        setHostAPsIanAlgorithmRecursiveNew(5, hosts, AP)
+        print("Ian's Algorithm: Recursive New")
     else:
         setHostAPsIanAlgorithm(5, hosts, AP)
         print("Ian's Algorithm")
@@ -178,7 +184,6 @@ def setHostAPsNullAlgorithm():
     
 ##AFTER MORE TESTING, I'VE REALIZED THAT THIS ALGO IS TOTALLY SHIT AT THIS POINT -- NEEDS WORK (-Ian)    
 def setHostAPsIanAlgorithmRecursive(numSubAPs, hosts, baseAP):
-    
     global AP
     
     for host in hosts:
@@ -215,9 +220,128 @@ def setHostAPsIanAlgorithmRecursive(numSubAPs, hosts, baseAP):
                         subHosts.append(compare)
                 if(len(subHosts) >= numSubAPs/2):
                     setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
+                    
+# a subAP and its hosts will reconfigure to find the most central host to be the subAP
+def recalculateSubAPs(hosts,subAPs,baseAP):
+    global AP
 
-def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
+    for s in subAPs:
+        groupOfHosts = [s]
+        for host in hosts:
+            if host['myAP'] == s:
+                groupOfHosts.append(host)
+        avgX = 0
+        avgY = 0
+        for h in groupOfHosts:
+            avgX += h['x']
+            avgY += h['y']
+        avgX = avgX/len(groupOfHosts)
+        avgY = avgY/len(groupOfHosts)
+        
+        minDistance = 999999999
+        newSub = s
+        for h in groupOfHosts:
+            distanceToCenter = sqrt((avgX - h['x'])**2 + (avgY - h['y'])**2)
+            if minDistance > distanceToCenter:
+                newSub = h
+                minDistance = distanceToCenter
+        s['nodeColor'] = 0
+        for h in groupOfHosts:
+            if h == newSub:
+                h['nodeColor'] = 1
+                h['myAP'] = baseAP
+            else:
+                h['myAP'] = newSub
+
+#hosts will choose the closest AP or SubAP to be their AP
+def redetermineMyAPs(hosts, baseAP):
+    currentSubs = [baseAP]
     
+    for host in hosts:
+        if host['myAP'] == baseAP:
+            currentSubs.append(host)
+    
+    subsubs = []
+    for s in currentSubs[1:]:
+        for host in hosts:
+            if host['myAP'] == s: 
+                if distanceBetweenHosts(host,s) > distanceBetweenHosts(host,baseAP):
+                    host['myAP']=baseAP
+                subsubs.append(host)
+             
+    
+    currentSubs = currentSubs + subsubs
+    for host in hosts:
+        if host in currentSubs:
+            continue
+        distances = []
+        for subAP in currentSubs:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = currentSubs[distances.index(min(distances))]
+        
+        
+
+def setHostAPsIanAlgorithmRecursiveNew(numSubAPs, hosts, baseAP):
+    global AP
+    
+    for host in hosts:
+        host['myAP'] = host
+    
+    for i in range(min(numSubAPs, len(hosts))):
+        for host in hosts:
+            distanceSum = 0
+            host['distanceSum'] = 0
+            host['nodeColor'] = 1
+            for compare in hosts:
+                if(compare['myAP'] == host):
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)
+                else:
+                    host['distanceSum'] += distanceBetweenHosts(host, compare)*999999999
+            
+        
+        hosts = sorted(hosts, key=lambda k:  k['distanceSum'])
+        hosts[i]['myAP'] = baseAP
+        
+    for host in hosts[numSubAPs:]:
+        distances = []
+        for subAP in hosts[:numSubAPs]:
+            distances.append(distanceBetweenHosts(host, subAP))
+        host['myAP'] = hosts[distances.index(min(distances))]
+        host['nodeColor'] = 0
+        
+    if AP == baseAP:
+        for host in hosts:
+            if host['myAP'] == AP:
+                subHosts = []
+                for compare in hosts:
+                    if compare['myAP'] == host:
+                        subHosts.append(compare)
+                if(len(subHosts) >= numSubAPs/2):
+                    setHostAPsIanAlgorithm(numSubAPs, subHosts, host)
+    
+    #this to the end is the only difference between the Old one
+    
+    #this causes issue due to my poorly written function
+    # subs = []
+    # for host in hosts:
+    #     if host['myAP'] == AP:
+    #         subs.append(host)
+    # recalculateSubAPs(hosts,subs,AP)
+    
+    # the subSubAPs and its hosts will reconfigure to find the most central host to be the subAP
+    for host in hosts:
+        if host['myAP'] == AP:
+            subHosts = []
+            for compare in hosts:
+                if compare['myAP'] == host:
+                    subHosts.append(compare)
+            recalculateSubAPs(hosts,subHosts,host)
+    #hosts choose the closest AP or subAP to be their new AP
+    redetermineMyAPs(hosts,baseAP)    
+
+            
+    
+def setHostAPsIanAlgorithm(numSubAPs, hosts, baseAP):
     global AP
     
     for host in hosts:
@@ -300,7 +424,59 @@ def setHostAPsErikAlgorithm2():
                
            
        host['nodeColor'] = 0
+
+# def gatherNearbyHosts(i, subAPs):
+#     global hosts
+#     temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(subAPs[i], k))
+#     for h in temp_hosts:
+#         if h in subAPs:
+#             break
+#         possibleNewDistance = sqrt((subAPs[i]['x'] - h['x'])**2 + (subAPs[i]['y'] - h['y'])**2)
+#         if h['myAP'] != None:
+#             if h['signalDistance'] > possibleNewDistance:
+#                 h['myAP'] = subAPs[i]
+#                 h['signalDistance'] = possibleNewDistance
+#                 subAPs.append(h)
+                
+#                 print "new distance, change AP:", possibleNewDistance
+#         else:
+#             h['myAP'] = subAPs[i]
+#             h['signalDistance'] = possibleNewDistance
+#             subAPs.append(h)
+            
+#             print "new distance:", possibleNewDistance
+#             print h['x'],h['y']
     
+# def setHostAPsErikAlgorithm3():
+#     global AP
+#     global hosts
+#     for host in hosts:
+#         host['myAP'] = None
+#     hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+#     temp = hosts
+#     subAPs = []
+    
+#     for i in range(4):
+#        hosts[i]['myAP'] = AP
+#        hosts[i]['nodeColor'] = 0 
+#        subAPs.append(hosts[i])
+       
+#     for i in range(len(subAPs)):
+#         gatherNearbyHosts(i,subAPs)
+
+#     for i in range(len(hosts[4:])): 
+#         host = hosts[i+4]
+#         temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+#         for h in temp_hosts:
+#             if h in subAPs:
+#                 host['myAP'] = h
+#                 subAPs.append(host)
+#                 host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+#                 gatherNearbyHosts(-1,subAPs)
+#                 break
+#         host['nodeColor'] = 0
+
+
 def setHostAPsTravisAlgorithmExtended():
     
     global AP
@@ -458,48 +634,48 @@ refreshTopology()
 #The 'showInterference' flag on the AP is used to override the showInterference flag for all other hosts to generate an overall interference map
 
 #get statistics and write out to csv
-with open('/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
-    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic', 'cluster']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    # each run is done 3 times, avg will be taken
-    # pure randomly
-    for numHost in [30, 100, 250]:
-        for trial in range(0, 3):
-            hosts = randomlyGenerateHosts(numHost)
-            show_stats=True
-            for alg in range(1, total_number_algorithms+1):
-                current_algorithm = alg
-                refreshTopology()
-                stats = (getInterferenceStats())
-                stats['algorithm'] = current_algorithm
-                stats['cluster'] = 'None'
-                writer.writerow(stats)
+# with open('/Users/travissiems/NetworkTopology/Simulator_py/stats.csv', 'wb') as csvfile:
+#     fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic', 'cluster']
+#     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+#     writer.writeheader()
+#     # each run is done 3 times, avg will be taken
+#     # pure randomly
+#     for numHost in [30, 100, 250]:
+#         for trial in range(0, 3):
+#             hosts = randomlyGenerateHosts(numHost)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'None'
+#                 writer.writerow(stats)
         
-    # groups
-    for numHost in [3, 10, 25]:
-        for trial in range(0, 3):
-            # weakly clustered
-            hosts = randomlyGenerateHostsInGroups(numHost, 10, 100)
-            show_stats=True
-            for alg in range(1, total_number_algorithms+1):
-                current_algorithm = alg
-                refreshTopology()
-                stats = (getInterferenceStats())
-                stats['algorithm'] = current_algorithm
-                stats['cluster'] = 'Weak'
-                writer.writerow(stats)    
+#     # groups
+#     for numHost in [3, 10, 25]:
+#         for trial in range(0, 3):
+#             # weakly clustered
+#             hosts = randomlyGenerateHostsInGroups(numHost, 10, 100)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'Weak'
+#                 writer.writerow(stats)    
         
-            # strongly clustered
-            hosts = randomlyGenerateHostsInGroups(numHost, 10, 35)
-            show_stats=True
-            for alg in range(1, total_number_algorithms+1):
-                current_algorithm = alg
-                refreshTopology()
-                stats = (getInterferenceStats())
-                stats['algorithm'] = current_algorithm
-                stats['cluster'] = 'Strong'
-                writer.writerow(stats)    
+#             # strongly clustered
+#             hosts = randomlyGenerateHostsInGroups(numHost, 10, 35)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'Strong'
+#                 writer.writerow(stats)    
 
 # print("Before Loop")
 
