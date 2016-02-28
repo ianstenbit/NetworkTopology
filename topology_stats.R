@@ -55,6 +55,14 @@ algorithm6$sd_dist <- sqrt(algorithm6$sd_dist)
 algorithm6$nodes <- NULL
 algorithm6$cluster <- NULL
 
+algorithm7 <- data[which(data$algorithm == 7),c("nodes", "interference", "sd_interference", "hops", "sd_hops", "distance", "sd_dist", "totalTraffic", "cluster")]
+algorithm7 <- aggregate(algorithm7, by=list(algorithm7$nodes, algorithm7$cluster), FUN=mean)
+algorithm7$sd_interference <- sqrt(algorithm7$sd_interference)
+algorithm7$sd_hops <- sqrt(algorithm7$sd_hops)
+algorithm7$sd_dist <- sqrt(algorithm7$sd_dist)
+algorithm7$nodes <- NULL
+algorithm7$cluster <- NULL
+
 source("http://michael.hahsler.net/SMU/EMIS7332/R/copytable.R")
 copytable(algorithm1)
 copytable(algorithm2)
@@ -62,6 +70,7 @@ copytable(algorithm3)
 copytable(algorithm4)
 copytable(algorithm5)
 copytable(algorithm6)
+copytable(algorithm7)
 
 
 plot(algorithm1$nodes, algorithm1$interference, col=algorithm1$Group.2, pch=20, main="Interference for algorithm 1")
