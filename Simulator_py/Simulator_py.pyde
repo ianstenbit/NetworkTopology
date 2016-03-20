@@ -5,7 +5,7 @@ SCREEN_HEIGHT = 800
 num_hosts = 100
 show_stats = False
 current_algorithm = 1
-total_number_algorithms = 7
+total_number_algorithms = 8
 current_randomization_pattern = 1
 
 
@@ -144,13 +144,13 @@ def refreshTopology():
     elif abs(current_algorithm % total_number_algorithms) == 4:
         setHostAPsErikAlgorithm()
         print("Erik's Algorithm: Distance Greedy")
-    # elif abs(current_algorithm % total_number_algorithms) == 5:
-    #     setHostAPsErikAlgorithm3()
-    #     print("Erik's Algorithm 3: Distance Greedy")
     elif abs(current_algorithm % total_number_algorithms) == 5:
+        setHostAPsErikSemiRecursiveDistanceGreedy()       
+        print("Erik's Algorithm 3: Distance Greedy")
+    elif abs(current_algorithm % total_number_algorithms) == 6:
         setHostAPsIanAlgorithmRecursive(5, hosts, AP)
         print("Ian's Algorithm: Recursive")
-    elif abs(current_algorithm % total_number_algorithms) == 6:
+    elif abs(current_algorithm % total_number_algorithms) == 7:
         setHostAPsIanAlgorithmRecursiveNew(5, hosts, AP)
         print("Ian's Algorithm: Recursive New")
     else:
@@ -447,34 +447,38 @@ def setHostAPsErikAlgorithm2():
 #             print "new distance:", possibleNewDistance
 #             print h['x'],h['y']
     
-# def setHostAPsErikAlgorithm3():
-#     global AP
-#     global hosts
-#     for host in hosts:
-#         host['myAP'] = None
-#     hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
-#     temp = hosts
-#     subAPs = []
+def setHostAPsErikSemiRecursiveDistanceGreedy():
+    global AP
+    global hosts
+    for host in hosts:
+        host['myAP'] = None
+        host['hops'] = 0
+    hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(AP, k))
+    temp = hosts
+    subAPs = []
+    for i in range(4):
+       hosts[i]['myAP'] = AP
+       hosts[i]['nodeColor'] = 0 
+       hosts[i]['hops'] = 1
+       subAPs.append(hosts[i])
+    for host in hosts[4:]: 
+       temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
+       found = False
+       for h in temp_hosts:
+           if h in subAPs and h['hops'] < 4:
+               host['myAP'] = h
+               host['hops'] = h['hops'] + 1
+               subAPs.append(host)
+               found = True
+               host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
+               break
+       host['nodeColor'] = 0
+       if not found:
+           host['myAP'] = AP
+           host['nodeColor'] = 0 
+           host['hops'] = 1
+           subAPs.append(host)
     
-#     for i in range(4):
-#        hosts[i]['myAP'] = AP
-#        hosts[i]['nodeColor'] = 0 
-#        subAPs.append(hosts[i])
-       
-#     for i in range(len(subAPs)):
-#         gatherNearbyHosts(i,subAPs)
-
-#     for i in range(len(hosts[4:])): 
-#         host = hosts[i+4]
-#         temp_hosts = sorted(hosts, key=lambda k: distanceBetweenHosts(host, k))
-#         for h in temp_hosts:
-#             if h in subAPs:
-#                 host['myAP'] = h
-#                 subAPs.append(host)
-#                 host['signalDistance'] = sqrt((host['x'] - h['x'])**2 + (host['y'] - h['y'])**2)
-#                 gatherNearbyHosts(-1,subAPs)
-#                 break
-#         host['nodeColor'] = 0
 
 
 def setHostAPsTravisAlgorithmExtended():
