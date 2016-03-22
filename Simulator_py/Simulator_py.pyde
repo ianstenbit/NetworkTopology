@@ -641,47 +641,47 @@ refreshTopology()
 #path = '/Users/travissiems/NetworkTopology/Simulator_py/stats.csv'
 # path = '/Users/danh/Documents/Networks/project/NetworkTopology/Simulator_py/stats.csv'
 # with open(path, 'wb') as csvfile:
-#    fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic', 'cluster']
-#    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-#    writer.writeheader()
-#    # each run is done 3 times, avg will be taken
-#    # pure randomly
-#    for numHost in [30, 100, 250]:
-#        for trial in range(0, 3):
-#            hosts = randomlyGenerateHosts(numHost)
-#            show_stats=True
-#            for alg in range(1, total_number_algorithms+1):
-#                current_algorithm = alg
-#                refreshTopology()
-#                stats = (getInterferenceStats())
-#                stats['algorithm'] = current_algorithm
-#                stats['cluster'] = 'None'
-#                writer.writerow(stats)
+#     fieldnames = ['algorithm', 'nodes', 'interference', 'sd_interference', 'hops', 'sd_hops', 'distance', 'sd_dist', 'totalTraffic', 'cluster']
+#     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+#     writer.writeheader()
+#     # each run is done 3 times, avg will be taken
+#     # pure randomly
+#     for numHost in [30, 100, 250]:
+#         for trial in range(0, 3):
+#             hosts = randomlyGenerateHosts(numHost)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'None'
+#                 writer.writerow(stats)
         
-#    # groups
-#    for numHost in [3, 10, 25]:
-#        for trial in range(0, 3):
-#            # weakly clustered
-#            hosts = randomlyGenerateHostsInGroups(numHost, 10, 100)
-#            show_stats=True
-#            for alg in range(1, total_number_algorithms+1):
-#                current_algorithm = alg
-#                refreshTopology()
-#                stats = (getInterferenceStats())
-#                stats['algorithm'] = current_algorithm
-#                stats['cluster'] = 'Weak'
-#                writer.writerow(stats)    
+#     # groups
+#     for numHost in [3, 10, 25]:
+#         for trial in range(0, 3):
+#             # weakly clustered
+#             hosts = randomlyGenerateHostsInGroups(numHost, 10, 100)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'Weak'
+#                 writer.writerow(stats)    
         
-#            # strongly clustered
-#            hosts = randomlyGenerateHostsInGroups(numHost, 10, 35)
-#            show_stats=True
-#            for alg in range(1, total_number_algorithms+1):
-#                current_algorithm = alg
-#                refreshTopology()
-#                stats = (getInterferenceStats())
-#                stats['algorithm'] = current_algorithm
-#                stats['cluster'] = 'Strong'
-#                writer.writerow(stats)    
+#             # strongly clustered
+#             hosts = randomlyGenerateHostsInGroups(numHost, 10, 35)
+#             show_stats=True
+#             for alg in range(1, total_number_algorithms+1):
+#                 current_algorithm = alg
+#                 refreshTopology()
+#                 stats = (getInterferenceStats())
+#                 stats['algorithm'] = current_algorithm
+#                 stats['cluster'] = 'Strong'
+#                 writer.writerow(stats)    
 
 # print("Before Loop")
 
