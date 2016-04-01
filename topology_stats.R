@@ -95,13 +95,41 @@ random <- rbind(random, alg5[which(alg5$layout == 'R'),])
 random <- rbind(random, alg7[which(alg7$layout == 'R'),])
 random <- rbind(random, alg8[which(alg8$layout == 'R'),])
 
-t <- alg2[which(alg2$layout == 'R'),]
-plot(random$nodes, random$throughput, col=random$type, pch=20,type='o')
-lines(t, type = "o", col = "blue")
-legend("topright", legend=levels(random$type), col=random$type, cex=.5)
+semi <- alg1[which(alg1$layout == 'SC'),]
+semi <- rbind(semi, alg2[which(alg2$layout == 'SC'),])
+semi <- rbind(semi, alg3[which(alg3$layout == 'SC'),])
+semi <- rbind(semi, alg4[which(alg4$layout == 'SC'),])
+semi <- rbind(semi, alg5[which(alg5$layout == 'SC'),])
+semi <- rbind(semi, alg7[which(alg7$layout == 'SC'),])
+semi <- rbind(semi, alg8[which(alg8$layout == 'SC'),])
 
-ggplot(random, aes(x = nodes, y = throughput, colour = type)) + 
-  geom_line(size=1) + 
-  ylab(label="Throughput") + 
-  xlab("Nodes") + 
-  scale_colour_manual(values=c("black", "blue", "red", "grey", "green", "orange", "purple"))
+clustered <- alg1[which(alg1$layout == 'C'),]
+clustered <- rbind(clustered, alg2[which(alg2$layout == 'C'),])
+clustered <- rbind(clustered, alg3[which(alg3$layout == 'C'),])
+clustered <- rbind(clustered, alg4[which(alg4$layout == 'C'),])
+clustered <- rbind(clustered, alg5[which(alg5$layout == 'C'),])
+clustered <- rbind(clustered, alg7[which(alg7$layout == 'C'),])
+clustered <- rbind(clustered, alg8[which(alg8$layout == 'C'),])ß
+
+library(ggplot2)
+ggplot(random, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
+  #geom_line(size=1) +
+  geom_bar(stat="identity", position="dodge") +
+  ylab(label="Throughput") +
+  xlab("Nodes") +
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
+
+
+ggplot(semi, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
+  #geom_line(size=1) +
+  geom_bar(stat="identity", position="dodge") +
+  ylab(label="Throughput") +
+  xlab("Nodes") +
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
+
+ggplot(clustered, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
+  #geom_line(size=1) +
+  geom_bar(stat="identity", position="dodge") +
+  ylab(label="Throughput") +
+  xlab("Nodes") +
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
