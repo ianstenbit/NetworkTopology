@@ -1,10 +1,10 @@
 layout, interference, inter_sd, hops, hops_sd, throughput, nodes, type
-R, 4.933, 2.112, 0.833, 0.372, 0.110, 30, alg8
-R, 19.25, 8.565, 0.95, 0.217, 0.026, 100, alg8
-R, 63.30, 25.70, 0.98, 0.14, 0.007, 250, alg8
-SC, 9.9, 3.708, 0.833, 0.372, 0.055, 30, alg8
-SC, 25.2, 11.04, 0.95, 0.217, 0.020, 100, alg8
-SC, 65.52, 27.00, 0.98, 0.14, 0.007, 250, alg8
-C, 11.46, 7.387, 0.833, 0.372, 0.047, 30, alg8
-C, 24.52, 13.75, 0.95, 0.217, 0.020, 100, alg8
-C, 60.32, 28.50, 0.98, 0.14, 0.008, 250, alg8
+R, 4.933, 2.112, 0.833, 0.372, 0.110, 30, Multi-Tier Centralization
+R, 19.25, 8.565, 0.95, 0.217, 0.026, 100, Multi-Tier Centralization
+R, 63.30, 25.70, 0.98, 0.14, 0.007, 250, Multi-Tier Centralization
+SC, 9.9, 3.708, 0.833, 0.372, 0.055, 30, Multi-Tier Centralization
+SC, 25.2, 11.04, 0.95, 0.217, 0.020, 100, Multi-Tier Centralization
+SC, 65.52, 27.00, 0.98, 0.14, 0.007, 250, Multi-Tier Centralization
+C, 11.46, 7.387, 0.833, 0.372, 0.047, 30, Multi-Tier Centralization
+C, 24.52, 13.75, 0.95, 0.217, 0.020, 100, Multi-Tier Centralization
+C, 60.32, 28.50, 0.98, 0.14, 0.008, 250, Multi-Tier Centralization

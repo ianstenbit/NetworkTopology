@@ -109,27 +109,32 @@ clustered <- rbind(clustered, alg3[which(alg3$layout == 'C'),])
 clustered <- rbind(clustered, alg4[which(alg4$layout == 'C'),])
 clustered <- rbind(clustered, alg5[which(alg5$layout == 'C'),])
 clustered <- rbind(clustered, alg7[which(alg7$layout == 'C'),])
-clustered <- rbind(clustered, alg8[which(alg8$layout == 'C'),])ß
+clustered <- rbind(clustered, alg8[which(alg8$layout == 'C'),])
 
 library(ggplot2)
+cbbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
 ggplot(random, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
   #geom_line(size=1) +
   geom_bar(stat="identity", position="dodge") +
   ylab(label="Throughput") +
   xlab("Nodes") +
-  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
-
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") ) +
+  scale_fill_manual(values=cbbPalette)
 
 ggplot(semi, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
   #geom_line(size=1) +
   geom_bar(stat="identity", position="dodge") +
   ylab(label="Throughput") +
   xlab("Nodes") +
-  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") ) +
+  scale_fill_manual(values=cbbPalette)
 
-ggplot(clustered, aes(x = nodes, y = throughput, colour = type, clarity, fill = type)) +
+
+ggplot(clustered, aes(x = nodes, y = throughput,clarity, fill = type, colour = type)) +
   #geom_line(size=1) +
   geom_bar(stat="identity", position="dodge") +
   ylab(label="Throughput") +
   xlab("Nodes") +
-  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") )
+  scale_colour_manual(values=c("black", "black", "black", "black", "black", "black", "black") ) +
+  scale_fill_manual(values=cbbPalette)
