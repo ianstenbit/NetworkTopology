@@ -76,3 +76,32 @@ copytable(algorithm7)
 plot(algorithm1$nodes, algorithm1$interference, col=algorithm1$Group.2, pch=20, main="Interference for algorithm 1")
 legend(x='topleft', legend=names(summary(algorithm1$Group.2)), col=algorithm1$Group.2, lwd=1, cex=.5)
 # pairs(data[, c("nodes", "interference", "hops", "distance", "totalTraffic")], col=data$algorithm, pch=20)
+
+#ploting
+alg1 <- read.csv('1_NullAlgorithm.csv')
+alg2 <- read.csv('2_TravisAlgo.csv')
+alg3 <- read.csv('3_TravisExtended.csv')
+alg4 <- read.csv('4_ErikFullyRecursive.csv')
+alg5 <- read.csv('5_ErikSemiRecursive.csv')
+alg7 <- read.csv('7_IanRecursive.csv')
+alg8 <- read.csv('8_IanAlgo.csv')
+
+
+random <- alg1[which(alg1$layout == 'R'),]
+random <- rbind(random, alg2[which(alg2$layout == 'R'),])
+random <- rbind(random, alg3[which(alg3$layout == 'R'),])
+random <- rbind(random, alg4[which(alg4$layout == 'R'),])
+random <- rbind(random, alg5[which(alg5$layout == 'R'),])
+random <- rbind(random, alg7[which(alg7$layout == 'R'),])
+random <- rbind(random, alg8[which(alg8$layout == 'R'),])
+
+t <- alg2[which(alg2$layout == 'R'),]
+plot(random$nodes, random$throughput, col=random$type, pch=20,type='o')
+lines(t, type = "o", col = "blue")
+legend("topright", legend=levels(random$type), col=random$type, cex=.5)
+
+ggplot(random, aes(x = nodes, y = throughput, colour = type)) + 
+  geom_line(size=1) + 
+  ylab(label="Throughput") + 
+  xlab("Nodes") + 
+  scale_colour_manual(values=c("black", "blue", "red", "grey", "green", "orange", "purple"))
